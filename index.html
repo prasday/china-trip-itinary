@@ -1,0 +1,2384 @@
+<!DOCTYPE html>
+<!-- saved from url=(0060)file:///C:/Users/DELL/Downloads/china_itinerary_builder.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>China Trip Itinerary Builder – Nithya, Abhi &amp; Ananya</title>
+<script src="./tripbuilder_files/html2canvas.min.js.download"></script>
+<style>
+/* ── RESET & BASE ── */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --bg:       #0f0e0c;
+  --surf:     #1a1814;
+  --surf2:    #232018;
+  --border:   #2e2b24;
+  --gold:     #c9a84c;
+  --gold2:    #e8c97a;
+  --cream:    #f0e6d0;
+  --muted:    #7a7060;
+  --red:      #c0392b;
+  --text:     #e8dcc8;
+  --green:    #27ae60;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 14px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── HEADER ── */
+.app-header {
+  background: var(--surf);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+}
+
+.logo { display:flex; flex-direction:column; min-width:160px; }
+.logo-tag { font-size:9px; letter-spacing:.4em; color:var(--gold); text-transform:uppercase; }
+.logo h1 { font-size:18px; font-weight:700; color:var(--cream); letter-spacing:.02em; }
+
+.header-fields {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  flex: 1;
+  align-items: center;
+}
+
+.hf {
+  background: var(--surf2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  outline: none;
+  transition: border-color .2s;
+}
+.hf:focus { border-color: var(--gold); }
+.hf::placeholder { color: var(--muted); }
+.hf-title { width: 230px; }
+.hf-names { width: 200px; }
+.hf-date  { width: 150px; }
+
+.header-btns { display:flex; gap:8px; align-items:center; }
+
+/* ── BUTTONS ── */
+.btn {
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: 7px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  border: none;
+  transition: all .18s;
+  white-space: nowrap;
+}
+.btn-gold  { background:var(--gold);  color:#0f0e0c; }
+.btn-gold:hover  { background:var(--gold2); }
+.btn-outline { background:transparent; border:1px solid var(--border); color:var(--muted); }
+.btn-outline:hover { border-color:var(--gold); color:var(--gold); }
+.btn-red   { background:transparent; border:1px solid #5a2020; color:#e07070; font-size:10px; padding:5px 10px; }
+.btn-red:hover { background:#5a2020; color:#fff; }
+.btn-ghost { background:transparent; border:1px solid var(--border); color:var(--muted); font-size:10px; padding:5px 10px; }
+.btn-ghost:hover { border-color:var(--gold); color:var(--gold); }
+.btn-green { background:var(--green); color:#fff; }
+.btn-green:hover { background:#2ecc71; }
+
+/* ── TABS ── */
+.tabs {
+  display: flex;
+  gap: 0;
+  background: var(--surf);
+  border-bottom: 1px solid var(--border);
+  padding: 0 20px;
+}
+.tab {
+  padding: 10px 18px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  color: var(--muted);
+  border-bottom: 2px solid transparent;
+  transition: all .2s;
+  user-select: none;
+}
+.tab:hover { color: var(--gold); }
+.tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+/* ── MAIN LAYOUT ── */
+.app-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  flex: 1;
+  overflow: hidden;
+  height: calc(100vh - 105px);
+}
+
+/* ── EDITOR ── */
+.editor-panel {
+  overflow-y: auto;
+  padding: 16px 20px;
+  border-right: 1px solid var(--border);
+}
+.editor-panel::-webkit-scrollbar { width:4px; }
+.editor-panel::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+
+.toolbar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.toolbar .spacer { flex:1; }
+
+.sec-label {
+  font-size: 9px;
+  letter-spacing: .35em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin: 20px 0 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+.sec-label:first-child { margin-top: 0; }
+
+/* ── DAY CARD ── */
+.day-card {
+  background: var(--surf);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  margin-bottom: 10px;
+  overflow: hidden;
+  transition: border-color .2s;
+}
+.day-card:hover { border-color: #3a3628; }
+
+.day-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--surf2);
+  cursor: pointer;
+}
+
+.day-num-badge {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--gold);
+  min-width: 26px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.day-fields {
+  display: flex;
+  gap: 6px;
+  flex: 1;
+  flex-wrap: wrap;
+}
+
+.df {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 12px;
+  padding: 5px 8px;
+  border-radius: 3px;
+  outline: none;
+  transition: border-color .2s;
+}
+.df:focus { border-color: var(--gold); }
+.df::placeholder { color: var(--muted); }
+.df-date  { width: 140px; }
+.df-city  { width: 130px; }
+.df-title { flex: 1; min-width: 120px; }
+
+.day-body {
+  padding: 10px 14px;
+  border-top: 1px solid var(--border);
+}
+
+/* ── ACTIVITY ROW ── */
+.act-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+  animation: slideIn .2s ease;
+}
+
+@keyframes slideIn {
+  from { opacity:0; transform:translateX(-8px); }
+  to   { opacity:1; transform:translateX(0); }
+}
+
+.af {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 12px;
+  padding: 5px 7px;
+  border-radius: 3px;
+  outline: none;
+  transition: border-color .2s;
+}
+.af:focus { border-color: var(--gold); }
+.af::placeholder { color: var(--muted); }
+.af-time  { width: 82px; color: var(--gold); text-align:center; }
+.af-place { flex: 1.5; min-width: 90px; }
+.af-note  { flex: 2; min-width: 90px; color: var(--muted); }
+.af-note:focus { color: var(--text); }
+.af-type  { width: 90px; cursor:pointer; }
+
+.add-act-btn {
+  width: 100%;
+  background: none;
+  border: 1px dashed var(--border);
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 10px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  padding: 6px;
+  border-radius: 3px;
+  cursor: pointer;
+  margin-top: 4px;
+  transition: all .2s;
+}
+.add-act-btn:hover { border-color:var(--gold); color:var(--gold); }
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--muted);
+  line-height: 2.5;
+  font-size: 13px;
+}
+.empty-state strong { color: var(--gold); }
+
+/* ── INFO PANEL (tab 2) ── */
+.info-panel {
+  overflow-y: auto;
+  padding: 16px 20px;
+  border-right: 1px solid var(--border);
+}
+.info-panel::-webkit-scrollbar { width:4px; }
+.info-panel::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+
+.city-card {
+  background: var(--surf);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--gold);
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+}
+.city-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--cream);
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.city-emoji { font-size: 18px; }
+.city-desc { font-size: 12px; color: var(--muted); margin-bottom: 10px; line-height: 1.6; }
+
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.info-item {
+  background: var(--surf2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 8px 10px;
+}
+.info-item-label {
+  font-size: 9px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 4px;
+}
+.info-item-val {
+  font-size: 12px;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+.tips-list { list-style: none; margin-top: 8px; }
+.tips-list li {
+  font-size: 12px;
+  color: var(--muted);
+  padding: 4px 0;
+  display: flex;
+  gap: 6px;
+  line-height: 1.5;
+}
+.tips-list li::before { content:'›'; color:var(--gold); font-weight:700; flex-shrink:0; }
+.tip-highlight { color: var(--text); }
+
+/* ── PREVIEW PANEL ── */
+.preview-panel {
+  overflow-y: auto;
+  background: #fdf6ec;
+  color: #1a1208;
+}
+.preview-panel::-webkit-scrollbar { width:4px; }
+.preview-panel::-webkit-scrollbar-thumb { background:#d0c0a0; }
+
+.prev-header {
+  background: #1a1208;
+  color: #fdf6ec;
+  padding: 20px 24px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.prev-header::before {
+  content: '中国';
+  position: absolute;
+  font-size: 100px;
+  color: rgba(255,255,255,.03);
+  top: -10px;
+  right: 10px;
+  font-family: serif;
+  pointer-events: none;
+}
+.prev-tag { font-size:9px; letter-spacing:.4em; color:#c9a84c; text-transform:uppercase; margin-bottom:4px; }
+.prev-title { font-size:22px; font-weight:700; margin-bottom:4px; }
+.prev-names { font-size:12px; color:#a09080; letter-spacing:.1em; }
+.prev-names span { color:#c9a84c; }
+.prev-dates {
+  display: inline-block;
+  border: 1px solid #c9a84c;
+  color: #c9a84c;
+  font-size: 10px;
+  letter-spacing: .2em;
+  padding: 4px 14px;
+  margin-top: 8px;
+  text-transform: uppercase;
+}
+
+.prev-body { padding: 16px 20px 30px; max-width: 720px; margin: 0 auto; }
+
+.prev-week {
+  font-size: 9px;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: #c9a84c;
+  margin: 20px 0 10px 58px;
+  border-bottom: 1px solid #e8d9c0;
+  padding-bottom: 5px;
+}
+
+.prev-day {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.prev-date {
+  flex: 0 0 46px;
+  text-align: center;
+  padding-top: 2px;
+}
+.pnum {
+  font-size: 24px;
+  font-weight: 700;
+  color: #c0392b;
+  line-height: 1;
+}
+.pdow {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: #9a8a75;
+}
+
+.prev-card {
+  flex: 1;
+  background: #fff9f0;
+  border: 1px solid #e8d9c0;
+  border-left: 3px solid #c0392b;
+  border-radius: 4px;
+  padding: 8px 12px;
+}
+.prev-card-city {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: .2em;
+  color: #c9a84c;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+.prev-card-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1a1208;
+  margin-bottom: 4px;
+}
+
+.prev-acts { list-style:none; }
+.prev-acts li {
+  font-size: 11px;
+  color: #4a3c28;
+  padding: 2px 0;
+  display: flex;
+  gap: 5px;
+  align-items: flex-start;
+  line-height: 1.4;
+}
+.prev-acts li::before { content:'›'; color:#c0392b; font-weight:700; flex-shrink:0; }
+.time-b {
+  background: #f5e8d0;
+  color: #8a6a20;
+  font-size: 9px;
+  padding: 1px 5px;
+  border-radius: 2px;
+  flex-shrink: 0;
+  font-weight: 600;
+}
+.type-b {
+  font-size: 9px;
+  padding: 1px 5px;
+  border-radius: 2px;
+  flex-shrink: 0;
+  font-weight: 600;
+  letter-spacing: .05em;
+}
+.t-food   { background:#fff0d0; color:#8a5000; }
+.t-sight  { background:#d0f0e8; color:#006040; }
+.t-shop   { background:#f0d0f0; color:#600060; }
+.t-hotel  { background:#d0e8f0; color:#003060; }
+.t-travel { background:#e8e8e8; color:#404040; }
+.t-market { background:#ffe8d0; color:#804000; }
+.t-default{ background:#f0e8d8; color:#604828; }
+
+.prev-empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: #a09080;
+  line-height: 2.5;
+  font-size: 13px;
+}
+
+.prev-footer {
+  text-align: center;
+  padding: 14px;
+  font-size: 10px;
+  color: #a09080;
+  border-top: 1px solid #e8d9c0;
+  letter-spacing: .1em;
+}
+
+/* ── SELECT STYLING ── */
+select option { background: #1a1814; color: #e8dcc8; }
+
+/* ── PRINT ── */
+@media print {
+  .app-header, .tabs, .editor-panel, .info-panel, .toolbar { display:none !important; }
+  .app-body { display:block; height:auto; }
+  .preview-panel { overflow:visible; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══ HEADER ══ -->
+<header class="app-header">
+  <div class="logo">
+    <span class="logo-tag">Travel Planner</span>
+    <h1>✈ Itinerary Builder</h1>
+  </div>
+  <div class="header-fields">
+    <input id="hTrip" class="hf hf-title" placeholder="Trip Title" value="China Sourcing Trip 2026">
+    <input id="hNames" class="hf hf-names" placeholder="Travellers" value="Nithya · Abhi · Ananya">
+    <input id="hFrom" class="hf hf-date" type="date" title="Start Date" value="2026-05-21">
+    <span style="color:var(--muted)">→</span>
+    <input id="hTo" class="hf hf-date" type="date" title="End Date" value="2026-06-02">
+  </div>
+  <div class="header-btns">
+    <button class="btn btn-green" onclick="exportClean()">⬇ Export HTML</button>
+    <button class="btn btn-gold" onclick="exportImage()">🖼 Save as Image</button>
+    <button class="btn btn-outline" onclick="printPrev()">🖨 Print</button>
+  </div>
+</header>
+
+<!-- ══ TABS ══ -->
+<div class="tabs">
+  <div class="tab active" onclick="switchTab(&#39;editor&#39;,this)">📋 Itinerary Editor</div>
+  <div class="tab" onclick="switchTab(&#39;info&#39;,this)">🗺 City Info &amp; Tips</div>
+</div>
+
+<!-- ══ BODY ══ -->
+<div class="app-body">
+
+  <!-- LEFT: EDITOR -->
+  <div id="pEditor" class="editor-panel">
+    <div class="toolbar">
+      <button class="btn btn-gold" onclick="addDay()">＋ Add Day</button>
+      <button class="btn btn-outline" onclick="loadChina()">↺ Reset China Trip</button>
+      <div class="spacer"></div>
+      <button class="btn btn-outline" onclick="clearAll()">🗑 Clear All</button>
+    </div>
+    <div id="dayList">
+    <div class="day-card" id="dc-1">
+      <div class="day-header">
+        <div class="day-num-badge">1</div>
+        <div class="day-fields">
+          <input class="df df-date" type="date" value="2026-05-21" title="Date" onchange="sync(1,&#39;date&#39;,this.value)">
+          <input class="df df-city" type="text" value="Guangzhou → Lecong" placeholder="City / Location" oninput="sync(1,&#39;city&#39;,this.value)">
+          <input class="df df-title" type="text" value="Arrival &amp; Kungfu Market" placeholder="Day Title" oninput="sync(1,&#39;title&#39;,this.value)">
+        </div>
+        <button class="btn btn-ghost" onclick="removeDay(1)">✕</button>
+      </div>
+      <div class="day-body">
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="15:00" title="Time" onchange="syncAct(1,0,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Guangzhou Airport" placeholder="Place / Activity" oninput="syncAct(1,0,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Land, collect baggage, clear customs" placeholder="Notes (optional)" oninput="syncAct(1,0,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(1,0,&#39;type&#39;,this.value)">
+              <option value="food">🍜 Food</option><option value="sight">🏛 Sight</option><option value="shop">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel" selected="">✈ Travel</option><option value="market">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(1,0)">✕</button>
+          </div>
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="16:30" title="Time" onchange="syncAct(1,1,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Transfer to Lecong" placeholder="Place / Activity" oninput="syncAct(1,1,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="~45 min drive from GZ airport" placeholder="Notes (optional)" oninput="syncAct(1,1,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(1,1,&#39;type&#39;,this.value)">
+              <option value="food">🍜 Food</option><option value="sight">🏛 Sight</option><option value="shop">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel" selected="">✈ Travel</option><option value="market">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(1,1)">✕</button>
+          </div>
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="17:30" title="Time" onchange="syncAct(1,2,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Home / Accommodation" placeholder="Place / Activity" oninput="syncAct(1,2,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Check in, freshen up" placeholder="Notes (optional)" oninput="syncAct(1,2,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(1,2,&#39;type&#39;,this.value)">
+              <option value="food">🍜 Food</option><option value="sight">🏛 Sight</option><option value="shop">🛍 Shop</option><option value="hotel" selected="">🏨 Stay</option><option value="travel">✈ Travel</option><option value="market">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(1,2)">✕</button>
+          </div>
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="18:30" title="Time" onchange="syncAct(1,3,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Kungfu Market" placeholder="Place / Activity" oninput="syncAct(1,3,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Evening browse &amp; first purchases" placeholder="Notes (optional)" oninput="syncAct(1,3,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(1,3,&#39;type&#39;,this.value)">
+              <option value="food">🍜 Food</option><option value="sight">🏛 Sight</option><option value="shop">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel">✈ Travel</option><option value="market" selected="">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(1,3)">✕</button>
+          </div>
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="20:30" title="Time" onchange="syncAct(1,4,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Dinner at Home" placeholder="Place / Activity" oninput="syncAct(1,4,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Home-cooked meal, rest &amp; plan Day 2" placeholder="Notes (optional)" oninput="syncAct(1,4,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(1,4,&#39;type&#39;,this.value)">
+              <option value="food" selected="">🍜 Food</option><option value="sight">🏛 Sight</option><option value="shop">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel">✈ Travel</option><option value="market">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(1,4)">✕</button>
+          </div>
+        
+        <button class="add-act-btn" onclick="addActivity(1)">＋ Add Activity / Stop</button>
+      </div>
+    </div>
+  
+    <div class="day-card" id="dc-2">
+      <div class="day-header">
+        <div class="day-num-badge">2</div>
+        <div class="day-fields">
+          <input class="df df-date" type="date" value="2026-05-22" title="Date" onchange="sync(2,&#39;date&#39;,this.value)">
+          <input class="df df-city" type="text" value="Lecong → Shenzhen" placeholder="City / Location" oninput="sync(2,&#39;city&#39;,this.value)">
+          <input class="df df-title" type="text" value="Huaqiang Bei &amp; Dongmen Markets" placeholder="Day Title" oninput="sync(2,&#39;title&#39;,this.value)">
+        </div>
+        <button class="btn btn-ghost" onclick="removeDay(2)">✕</button>
+      </div>
+      <div class="day-body">
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="08:00" title="Time" onchange="syncAct(2,0,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Depart Lecong" placeholder="Place / Activity" oninput="syncAct(2,0,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Early start, ~1.5 hr to Shenzhen" placeholder="Notes (optional)" oninput="syncAct(2,0,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(2,0,&#39;type&#39;,this.value)">
+              <option value="food">🍜 Food</option><option value="sight">🏛 Sight</option><option value="shop">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel" selected="">✈ Travel</option><option value="market">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(2,0)">✕</button>
+          </div>
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="10:00" title="Time" onchange="syncAct(2,1,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Huaqiang Bei" placeholder="Place / Activity" oninput="syncAct(2,1,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Electronics &amp; gadgets wholesale market" placeholder="Notes (optional)" oninput="syncAct(2,1,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(2,1,&#39;type&#39;,this.value)">
+              <option value="food">🍜 Food</option><option value="sight">🏛 Sight</option><option value="shop">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel">✈ Travel</option><option value="market" selected="">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(2,1)">✕</button>
+          </div>
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="13:00" title="Time" onchange="syncAct(2,2,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Lunch – Cantonese Resto" placeholder="Place / Activity" oninput="syncAct(2,2,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Dongmen area, try local dishes" placeholder="Notes (optional)" oninput="syncAct(2,2,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(2,2,&#39;type&#39;,this.value)">
+              <option value="food" selected="">🍜 Food</option><option value="sight">🏛 Sight</option><option value="shop">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel">✈ Travel</option><option value="market">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(2,2)">✕</button>
+          </div>
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="14:30" title="Time" onchange="syncAct(2,3,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Dongmen Market" placeholder="Place / Activity" oninput="syncAct(2,3,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Fashion, clothing &amp; accessories" placeholder="Notes (optional)" oninput="syncAct(2,3,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(2,3,&#39;type&#39;,this.value)">
+              <option value="food">🍜 Food</option><option value="sight">🏛 Sight</option><option value="shop">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel">✈ Travel</option><option value="market" selected="">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(2,3)">✕</button>
+          </div>
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="18:00" title="Time" onchange="syncAct(2,4,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Coco Park Mall" placeholder="Place / Activity" oninput="syncAct(2,4,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Coffee, rest, small break" placeholder="Notes (optional)" oninput="syncAct(2,4,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(2,4,&#39;type&#39;,this.value)">
+              <option value="food">🍜 Food</option><option value="sight" selected="">🏛 Sight</option><option value="shop">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel">✈ Travel</option><option value="market">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(2,4)">✕</button>
+          </div>
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="20:00" title="Time" onchange="syncAct(2,5,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Return to Lecong" placeholder="Place / Activity" oninput="syncAct(2,5,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Night drive back, ~1.5 hr" placeholder="Notes (optional)" oninput="syncAct(2,5,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(2,5,&#39;type&#39;,this.value)">
+              <option value="food">🍜 Food</option><option value="sight">🏛 Sight</option><option value="shop">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel" selected="">✈ Travel</option><option value="market">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(2,5)">✕</button>
+          </div>
+        
+        <button class="add-act-btn" onclick="addActivity(2)">＋ Add Activity / Stop</button>
+      </div>
+    </div>
+  
+    <div class="day-card" id="dc-3">
+      <div class="day-header">
+        <div class="day-num-badge">3</div>
+        <div class="day-fields">
+          <input class="df df-date" type="date" value="2026-05-23" title="Date" onchange="sync(3,&#39;date&#39;,this.value)">
+          <input class="df df-city" type="text" value="Shenzhen → Lecong" placeholder="City / Location" oninput="sync(3,&#39;city&#39;,this.value)">
+          <input class="df df-title" type="text" value="Window of the World &amp; Artifacts" placeholder="Day Title" oninput="sync(3,&#39;title&#39;,this.value)">
+        </div>
+        <button class="btn btn-ghost" onclick="removeDay(3)">✕</button>
+      </div>
+      <div class="day-body">
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="09:00" title="Time" onchange="syncAct(3,0,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Dim Sum Brunch" placeholder="Place / Activity" oninput="syncAct(3,0,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Local restaurant before heading out" placeholder="Notes (optional)" oninput="syncAct(3,0,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(3,0,&#39;type&#39;,this.value)">
+              <option value="food" selected="">🍜 Food</option><option value="sight">🏛 Sight</option><option value="shop">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel">✈ Travel</option><option value="market">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(3,0)">✕</button>
+          </div>
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="10:30" title="Time" onchange="syncAct(3,1,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Window of the World" placeholder="Place / Activity" oninput="syncAct(3,1,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Iconic landmark, sightseeing &amp; photos" placeholder="Notes (optional)" oninput="syncAct(3,1,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(3,1,&#39;type&#39;,this.value)">
+              <option value="food">🍜 Food</option><option value="sight" selected="">🏛 Sight</option><option value="shop">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel">✈ Travel</option><option value="market">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(3,1)">✕</button>
+          </div>
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="13:30" title="Time" onchange="syncAct(3,2,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Dafen Oil Painting Village" placeholder="Place / Activity" oninput="syncAct(3,2,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Unique art &amp; affordable souvenirs" placeholder="Notes (optional)" oninput="syncAct(3,2,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(3,2,&#39;type&#39;,this.value)">
+              <option value="food">🍜 Food</option><option value="sight" selected="">🏛 Sight</option><option value="shop">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel">✈ Travel</option><option value="market">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(3,2)">✕</button>
+          </div>
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="15:30" title="Time" onchange="syncAct(3,3,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Artifacts &amp; Antiques Market" placeholder="Place / Activity" oninput="syncAct(3,3,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Browse &amp; purchase unique pieces" placeholder="Notes (optional)" oninput="syncAct(3,3,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(3,3,&#39;type&#39;,this.value)">
+              <option value="food">🍜 Food</option><option value="sight">🏛 Sight</option><option value="shop">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel">✈ Travel</option><option value="market" selected="">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(3,3)">✕</button>
+          </div>
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="19:30" title="Time" onchange="syncAct(3,4,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Night Train / Car to Lecong" placeholder="Place / Activity" oninput="syncAct(3,4,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Return to base for the night" placeholder="Notes (optional)" oninput="syncAct(3,4,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(3,4,&#39;type&#39;,this.value)">
+              <option value="food">🍜 Food</option><option value="sight">🏛 Sight</option><option value="shop">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel" selected="">✈ Travel</option><option value="market">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(3,4)">✕</button>
+          </div>
+        
+        <button class="add-act-btn" onclick="addActivity(3)">＋ Add Activity / Stop</button>
+      </div>
+    </div>
+  
+    <div class="day-card" id="dc-4">
+      <div class="day-header">
+        <div class="day-num-badge">4</div>
+        <div class="day-fields">
+          <input class="df df-date" type="date" value="2026-05-24" title="Date" onchange="sync(4,&#39;date&#39;,this.value)">
+          <input class="df df-city" type="text" value="Lecong / Guangzhou" placeholder="City / Location" oninput="sync(4,&#39;city&#39;,this.value)">
+          <input class="df df-title" type="text" value="Market Research – Day 1" placeholder="Day Title" oninput="sync(4,&#39;title&#39;,this.value)">
+        </div>
+        <button class="btn btn-ghost" onclick="removeDay(4)">✕</button>
+      </div>
+      <div class="day-body">
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="09:00" title="Time" onchange="syncAct(4,0,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Lecong Furniture City" placeholder="Place / Activity" oninput="syncAct(4,0,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Catalogue items, photograph &amp; note prices" placeholder="Notes (optional)" oninput="syncAct(4,0,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(4,0,&#39;type&#39;,this.value)">
+              <option value="food">🍜 Food</option><option value="sight">🏛 Sight</option><option value="shop">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel">✈ Travel</option><option value="market" selected="">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(4,0)">✕</button>
+          </div>
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="12:30" title="Time" onchange="syncAct(4,1,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Lunch – Shunde Cuisine" placeholder="Place / Activity" oninput="syncAct(4,1,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Try local Shunde fish dishes" placeholder="Notes (optional)" oninput="syncAct(4,1,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(4,1,&#39;type&#39;,this.value)">
+              <option value="food" selected="">🍜 Food</option><option value="sight">🏛 Sight</option><option value="shop">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel">✈ Travel</option><option value="market">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(4,1)">✕</button>
+          </div>
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="14:00" title="Time" onchange="syncAct(4,2,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Helong Clothing Market" placeholder="Place / Activity" oninput="syncAct(4,2,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Fabric &amp; clothing wholesale section" placeholder="Notes (optional)" oninput="syncAct(4,2,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(4,2,&#39;type&#39;,this.value)">
+              <option value="food">🍜 Food</option><option value="sight">🏛 Sight</option><option value="shop">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel">✈ Travel</option><option value="market" selected="">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(4,2)">✕</button>
+          </div>
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="17:30" title="Time" onchange="syncAct(4,3,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Team Review Session" placeholder="Place / Activity" oninput="syncAct(4,3,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Shortlist items, compare notes, plan orders" placeholder="Notes (optional)" oninput="syncAct(4,3,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(4,3,&#39;type&#39;,this.value)">
+              <option value="food">🍜 Food</option><option value="sight">🏛 Sight</option><option value="shop">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel">✈ Travel</option><option value="market">🏪 Market</option><option value="default" selected="">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(4,3)">✕</button>
+          </div>
+        
+        <button class="add-act-btn" onclick="addActivity(4)">＋ Add Activity / Stop</button>
+      </div>
+    </div>
+  
+    <div class="day-card" id="dc-5">
+      <div class="day-header">
+        <div class="day-num-badge">5</div>
+        <div class="day-fields">
+          <input class="df df-date" type="date" value="2026-05-25" title="Date" onchange="sync(5,&#39;date&#39;,this.value)">
+          <input class="df df-city" type="text" value="Lecong / Foshan" placeholder="City / Location" oninput="sync(5,&#39;city&#39;,this.value)">
+          <input class="df df-title" type="text" value="Market Research – Day 2" placeholder="Day Title" oninput="sync(5,&#39;title&#39;,this.value)">
+        </div>
+        <button class="btn btn-ghost" onclick="removeDay(5)">✕</button>
+      </div>
+      <div class="day-body">
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="09:00" title="Time" onchange="syncAct(5,0,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Longjiang Furniture Market" placeholder="Place / Activity" oninput="syncAct(5,0,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Largest furniture cluster in China" placeholder="Notes (optional)" oninput="syncAct(5,0,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(5,0,&#39;type&#39;,this.value)">
+              <option value="food">🍜 Food</option><option value="sight">🏛 Sight</option><option value="shop">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel">✈ Travel</option><option value="market" selected="">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(5,0)">✕</button>
+          </div>
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="12:00" title="Time" onchange="syncAct(5,1,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Lunch Break" placeholder="Place / Activity" oninput="syncAct(5,1,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Local eatery near markets" placeholder="Notes (optional)" oninput="syncAct(5,1,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(5,1,&#39;type&#39;,this.value)">
+              <option value="food" selected="">🍜 Food</option><option value="sight">🏛 Sight</option><option value="shop">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel">✈ Travel</option><option value="market">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(5,1)">✕</button>
+          </div>
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="13:30" title="Time" onchange="syncAct(5,2,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Supplier Negotiations" placeholder="Place / Activity" oninput="syncAct(5,2,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Get quotes, collect samples &amp; MOQs" placeholder="Notes (optional)" oninput="syncAct(5,2,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(5,2,&#39;type&#39;,this.value)">
+              <option value="food">🍜 Food</option><option value="sight">🏛 Sight</option><option value="shop">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel">✈ Travel</option><option value="market" selected="">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(5,2)">✕</button>
+          </div>
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="17:00" title="Time" onchange="syncAct(5,3,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Organise Supplier Contacts" placeholder="Place / Activity" oninput="syncAct(5,3,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Sort photos, contacts &amp; pricing notes" placeholder="Notes (optional)" oninput="syncAct(5,3,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(5,3,&#39;type&#39;,this.value)">
+              <option value="food">🍜 Food</option><option value="sight">🏛 Sight</option><option value="shop">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel">✈ Travel</option><option value="market">🏪 Market</option><option value="default" selected="">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(5,3)">✕</button>
+          </div>
+        
+        <button class="add-act-btn" onclick="addActivity(5)">＋ Add Activity / Stop</button>
+      </div>
+    </div>
+  
+    <div class="day-card" id="dc-6">
+      <div class="day-header">
+        <div class="day-num-badge">6</div>
+        <div class="day-fields">
+          <input class="df df-date" type="date" value="2026-05-26" title="Date" onchange="sync(6,&#39;date&#39;,this.value)">
+          <input class="df df-city" type="text" value="Guangzhou" placeholder="City / Location" oninput="sync(6,&#39;city&#39;,this.value)">
+          <input class="df df-title" type="text" value="Market Research – Day 3" placeholder="Day Title" oninput="sync(6,&#39;title&#39;,this.value)">
+        </div>
+        <button class="btn btn-ghost" onclick="removeDay(6)">✕</button>
+      </div>
+      <div class="day-body">
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="09:30" title="Time" onchange="syncAct(6,0,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Zhanxi Road Clothing Market" placeholder="Place / Activity" oninput="syncAct(6,0,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Wholesale fashion sourcing" placeholder="Notes (optional)" oninput="syncAct(6,0,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(6,0,&#39;type&#39;,this.value)">
+              <option value="food">🍜 Food</option><option value="sight">🏛 Sight</option><option value="shop">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel">✈ Travel</option><option value="market" selected="">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(6,0)">✕</button>
+          </div>
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="12:30" title="Time" onchange="syncAct(6,1,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Canton Tower Lunch" placeholder="Place / Activity" oninput="syncAct(6,1,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Lunch with a view of the city" placeholder="Notes (optional)" oninput="syncAct(6,1,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(6,1,&#39;type&#39;,this.value)">
+              <option value="food" selected="">🍜 Food</option><option value="sight">🏛 Sight</option><option value="shop">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel">✈ Travel</option><option value="market">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(6,1)">✕</button>
+          </div>
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="14:30" title="Time" onchange="syncAct(6,2,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Sample Collection" placeholder="Place / Activity" oninput="syncAct(6,2,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Sizing checks &amp; final price negotiations" placeholder="Notes (optional)" oninput="syncAct(6,2,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(6,2,&#39;type&#39;,this.value)">
+              <option value="food">🍜 Food</option><option value="sight">🏛 Sight</option><option value="shop" selected="">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel">✈ Travel</option><option value="market">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(6,2)">✕</button>
+          </div>
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="19:00" title="Time" onchange="syncAct(6,3,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Pearl River Night Cruise" placeholder="Place / Activity" oninput="syncAct(6,3,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Ananya&#39;s pick — scenic &amp; relaxing" placeholder="Notes (optional)" oninput="syncAct(6,3,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(6,3,&#39;type&#39;,this.value)">
+              <option value="food">🍜 Food</option><option value="sight" selected="">🏛 Sight</option><option value="shop">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel">✈ Travel</option><option value="market">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(6,3)">✕</button>
+          </div>
+        
+        <button class="add-act-btn" onclick="addActivity(6)">＋ Add Activity / Stop</button>
+      </div>
+    </div>
+  
+    <div class="day-card" id="dc-7">
+      <div class="day-header">
+        <div class="day-num-badge">7</div>
+        <div class="day-fields">
+          <input class="df df-date" type="date" value="2026-05-27" title="Date" onchange="sync(7,&#39;date&#39;,this.value)">
+          <input class="df df-city" type="text" value="Guangzhou / Lecong" placeholder="City / Location" oninput="sync(7,&#39;city&#39;,this.value)">
+          <input class="df df-title" type="text" value="Market Research – Day 4 &amp; Orders" placeholder="Day Title" oninput="sync(7,&#39;title&#39;,this.value)">
+        </div>
+        <button class="btn btn-ghost" onclick="removeDay(7)">✕</button>
+      </div>
+      <div class="day-body">
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="09:00" title="Time" onchange="syncAct(7,0,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Final Market Rounds" placeholder="Place / Activity" oninput="syncAct(7,0,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Last look at shortlisted items" placeholder="Notes (optional)" oninput="syncAct(7,0,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(7,0,&#39;type&#39;,this.value)">
+              <option value="food">🍜 Food</option><option value="sight">🏛 Sight</option><option value="shop">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel">✈ Travel</option><option value="market" selected="">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(7,0)">✕</button>
+          </div>
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="11:00" title="Time" onchange="syncAct(7,1,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Place Confirmed Orders" placeholder="Place / Activity" oninput="syncAct(7,1,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Lock in suppliers, get receipts &amp; timelines" placeholder="Notes (optional)" oninput="syncAct(7,1,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(7,1,&#39;type&#39;,this.value)">
+              <option value="food">🍜 Food</option><option value="sight">🏛 Sight</option><option value="shop" selected="">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel">✈ Travel</option><option value="market">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(7,1)">✕</button>
+          </div>
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="15:00" title="Time" onchange="syncAct(7,2,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Shamian Island" placeholder="Place / Activity" oninput="syncAct(7,2,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Colonial architecture, peaceful afternoon walk" placeholder="Notes (optional)" oninput="syncAct(7,2,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(7,2,&#39;type&#39;,this.value)">
+              <option value="food">🍜 Food</option><option value="sight" selected="">🏛 Sight</option><option value="shop">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel">✈ Travel</option><option value="market">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(7,2)">✕</button>
+          </div>
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="19:30" title="Time" onchange="syncAct(7,3,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Group Celebration Dinner" placeholder="Place / Activity" oninput="syncAct(7,3,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="End of market research week! 🥂" placeholder="Notes (optional)" oninput="syncAct(7,3,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(7,3,&#39;type&#39;,this.value)">
+              <option value="food" selected="">🍜 Food</option><option value="sight">🏛 Sight</option><option value="shop">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel">✈ Travel</option><option value="market">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(7,3)">✕</button>
+          </div>
+        
+        <button class="add-act-btn" onclick="addActivity(7)">＋ Add Activity / Stop</button>
+      </div>
+    </div>
+  
+    <div class="day-card" id="dc-8">
+      <div class="day-header">
+        <div class="day-num-badge">8</div>
+        <div class="day-fields">
+          <input class="df df-date" type="date" value="2026-05-28" title="Date" onchange="sync(8,&#39;date&#39;,this.value)">
+          <input class="df df-city" type="text" value="Day Trip" placeholder="City / Location" oninput="sync(8,&#39;city&#39;,this.value)">
+          <input class="df df-title" type="text" value="Excursion – Day 1" placeholder="Day Title" oninput="sync(8,&#39;title&#39;,this.value)">
+        </div>
+        <button class="btn btn-ghost" onclick="removeDay(8)">✕</button>
+      </div>
+      <div class="day-body">
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="07:30" title="Time" onchange="syncAct(8,0,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Depart early" placeholder="Place / Activity" oninput="syncAct(8,0,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Pack snacks for the road" placeholder="Notes (optional)" oninput="syncAct(8,0,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(8,0,&#39;type&#39;,this.value)">
+              <option value="food">🍜 Food</option><option value="sight">🏛 Sight</option><option value="shop">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel" selected="">✈ Travel</option><option value="market">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(8,0)">✕</button>
+          </div>
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="10:00" title="Time" onchange="syncAct(8,1,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Kaiping Diaolou Towers" placeholder="Place / Activity" oninput="syncAct(8,1,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="UNESCO heritage watchtowers (~2.5 hr drive)" placeholder="Notes (optional)" oninput="syncAct(8,1,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(8,1,&#39;type&#39;,this.value)">
+              <option value="food">🍜 Food</option><option value="sight" selected="">🏛 Sight</option><option value="shop">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel">✈ Travel</option><option value="market">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(8,1)">✕</button>
+          </div>
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="13:00" title="Time" onchange="syncAct(8,2,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Lunch at Local Restaurant" placeholder="Place / Activity" oninput="syncAct(8,2,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Try countryside Cantonese food" placeholder="Notes (optional)" oninput="syncAct(8,2,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(8,2,&#39;type&#39;,this.value)">
+              <option value="food" selected="">🍜 Food</option><option value="sight">🏛 Sight</option><option value="shop">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel">✈ Travel</option><option value="market">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(8,2)">✕</button>
+          </div>
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="15:00" title="Time" onchange="syncAct(8,3,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Explore Kaiping Old Town" placeholder="Place / Activity" oninput="syncAct(8,3,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Streets, markets &amp; local culture" placeholder="Notes (optional)" oninput="syncAct(8,3,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(8,3,&#39;type&#39;,this.value)">
+              <option value="food">🍜 Food</option><option value="sight" selected="">🏛 Sight</option><option value="shop">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel">✈ Travel</option><option value="market">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(8,3)">✕</button>
+          </div>
+        
+        <button class="add-act-btn" onclick="addActivity(8)">＋ Add Activity / Stop</button>
+      </div>
+    </div>
+  
+    <div class="day-card" id="dc-9">
+      <div class="day-header">
+        <div class="day-num-badge">9</div>
+        <div class="day-fields">
+          <input class="df df-date" type="date" value="2026-05-29" title="Date" onchange="sync(9,&#39;date&#39;,this.value)">
+          <input class="df df-city" type="text" value="Day Trip" placeholder="City / Location" oninput="sync(9,&#39;city&#39;,this.value)">
+          <input class="df df-title" type="text" value="Excursion – Day 2" placeholder="Day Title" oninput="sync(9,&#39;title&#39;,this.value)">
+        </div>
+        <button class="btn btn-ghost" onclick="removeDay(9)">✕</button>
+      </div>
+      <div class="day-body">
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="09:00" title="Time" onchange="syncAct(9,0,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Zhongshan City" placeholder="Place / Activity" oninput="syncAct(9,0,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Sun Yat-sen birthplace &amp; antique street" placeholder="Notes (optional)" oninput="syncAct(9,0,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(9,0,&#39;type&#39;,this.value)">
+              <option value="food">🍜 Food</option><option value="sight" selected="">🏛 Sight</option><option value="shop">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel">✈ Travel</option><option value="market">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(9,0)">✕</button>
+          </div>
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="13:00" title="Time" onchange="syncAct(9,1,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Lunch" placeholder="Place / Activity" oninput="syncAct(9,1,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Local Zhongshan cuisine" placeholder="Notes (optional)" oninput="syncAct(9,1,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(9,1,&#39;type&#39;,this.value)">
+              <option value="food" selected="">🍜 Food</option><option value="sight">🏛 Sight</option><option value="shop">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel">✈ Travel</option><option value="market">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(9,1)">✕</button>
+          </div>
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="15:30" title="Time" onchange="syncAct(9,2,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Spa &amp; Massage" placeholder="Place / Activity" oninput="syncAct(9,2,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Inexpensive &amp; excellent in this region" placeholder="Notes (optional)" oninput="syncAct(9,2,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(9,2,&#39;type&#39;,this.value)">
+              <option value="food">🍜 Food</option><option value="sight">🏛 Sight</option><option value="shop">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel">✈ Travel</option><option value="market">🏪 Market</option><option value="default" selected="">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(9,2)">✕</button>
+          </div>
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="19:00" title="Time" onchange="syncAct(9,3,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Night Market" placeholder="Place / Activity" oninput="syncAct(9,3,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Street food &amp; souvenir shopping" placeholder="Notes (optional)" oninput="syncAct(9,3,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(9,3,&#39;type&#39;,this.value)">
+              <option value="food">🍜 Food</option><option value="sight">🏛 Sight</option><option value="shop" selected="">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel">✈ Travel</option><option value="market">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(9,3)">✕</button>
+          </div>
+        
+        <button class="add-act-btn" onclick="addActivity(9)">＋ Add Activity / Stop</button>
+      </div>
+    </div>
+  
+    <div class="day-card" id="dc-10">
+      <div class="day-header">
+        <div class="day-num-badge">10</div>
+        <div class="day-fields">
+          <input class="df df-date" type="date" value="2026-05-30" title="Date" onchange="sync(10,&#39;date&#39;,this.value)">
+          <input class="df df-city" type="text" value="Return to Guangzhou" placeholder="City / Location" oninput="sync(10,&#39;city&#39;,this.value)">
+          <input class="df df-title" type="text" value="Excursion – Day 3 / Return" placeholder="Day Title" oninput="sync(10,&#39;title&#39;,this.value)">
+        </div>
+        <button class="btn btn-ghost" onclick="removeDay(10)">✕</button>
+      </div>
+      <div class="day-body">
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="09:00" title="Time" onchange="syncAct(10,0,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Wrap Up Trip" placeholder="Place / Activity" oninput="syncAct(10,0,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Check out &amp; head back to Guangzhou" placeholder="Notes (optional)" oninput="syncAct(10,0,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(10,0,&#39;type&#39;,this.value)">
+              <option value="food">🍜 Food</option><option value="sight">🏛 Sight</option><option value="shop">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel" selected="">✈ Travel</option><option value="market">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(10,0)">✕</button>
+          </div>
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="12:00" title="Time" onchange="syncAct(10,1,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Lunch en Route" placeholder="Place / Activity" oninput="syncAct(10,1,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Stop at local eatery" placeholder="Notes (optional)" oninput="syncAct(10,1,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(10,1,&#39;type&#39;,this.value)">
+              <option value="food" selected="">🍜 Food</option><option value="sight">🏛 Sight</option><option value="shop">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel">✈ Travel</option><option value="market">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(10,1)">✕</button>
+          </div>
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="14:30" title="Time" onchange="syncAct(10,2,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Freight &amp; Shipping Agents" placeholder="Place / Activity" oninput="syncAct(10,2,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Confirm bulk shipping quotes &amp; timelines" placeholder="Notes (optional)" oninput="syncAct(10,2,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(10,2,&#39;type&#39;,this.value)">
+              <option value="food">🍜 Food</option><option value="sight">🏛 Sight</option><option value="shop">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel">✈ Travel</option><option value="market">🏪 Market</option><option value="default" selected="">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(10,2)">✕</button>
+          </div>
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="19:00" title="Time" onchange="syncAct(10,3,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Early Dinner &amp; Rest" placeholder="Place / Activity" oninput="syncAct(10,3,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Big shopping days ahead — rest up!" placeholder="Notes (optional)" oninput="syncAct(10,3,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(10,3,&#39;type&#39;,this.value)">
+              <option value="food" selected="">🍜 Food</option><option value="sight">🏛 Sight</option><option value="shop">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel">✈ Travel</option><option value="market">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(10,3)">✕</button>
+          </div>
+        
+        <button class="add-act-btn" onclick="addActivity(10)">＋ Add Activity / Stop</button>
+      </div>
+    </div>
+  
+    <div class="day-card" id="dc-11">
+      <div class="day-header">
+        <div class="day-num-badge">11</div>
+        <div class="day-fields">
+          <input class="df df-date" type="date" value="2026-05-31" title="Date" onchange="sync(11,&#39;date&#39;,this.value)">
+          <input class="df df-city" type="text" value="Guangzhou" placeholder="City / Location" oninput="sync(11,&#39;city&#39;,this.value)">
+          <input class="df df-title" type="text" value="Guangzhou Shopping – Day 1" placeholder="Day Title" oninput="sync(11,&#39;title&#39;,this.value)">
+        </div>
+        <button class="btn btn-ghost" onclick="removeDay(11)">✕</button>
+      </div>
+      <div class="day-body">
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="10:00" title="Time" onchange="syncAct(11,0,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Beijing Road Pedestrian Street" placeholder="Place / Activity" oninput="syncAct(11,0,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Fashion, accessories, cosmetics" placeholder="Notes (optional)" oninput="syncAct(11,0,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(11,0,&#39;type&#39;,this.value)">
+              <option value="food">🍜 Food</option><option value="sight">🏛 Sight</option><option value="shop" selected="">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel">✈ Travel</option><option value="market">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(11,0)">✕</button>
+          </div>
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="13:00" title="Time" onchange="syncAct(11,1,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Lunch – Local Cantonese" placeholder="Place / Activity" oninput="syncAct(11,1,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Try Guangzhou Restaurant (century old)" placeholder="Notes (optional)" oninput="syncAct(11,1,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(11,1,&#39;type&#39;,this.value)">
+              <option value="food" selected="">🍜 Food</option><option value="sight">🏛 Sight</option><option value="shop">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel">✈ Travel</option><option value="market">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(11,1)">✕</button>
+          </div>
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="14:30" title="Time" onchange="syncAct(11,2,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Shangxiajiu Commercial Street" placeholder="Place / Activity" oninput="syncAct(11,2,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Local brands &amp; traditional snacks" placeholder="Notes (optional)" oninput="syncAct(11,2,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(11,2,&#39;type&#39;,this.value)">
+              <option value="food">🍜 Food</option><option value="sight">🏛 Sight</option><option value="shop" selected="">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel">✈ Travel</option><option value="market">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(11,2)">✕</button>
+          </div>
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="17:00" title="Time" onchange="syncAct(11,3,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Gift Shopping" placeholder="Place / Activity" oninput="syncAct(11,3,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Tea, ceramics, dried goods for family home" placeholder="Notes (optional)" oninput="syncAct(11,3,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(11,3,&#39;type&#39;,this.value)">
+              <option value="food">🍜 Food</option><option value="sight">🏛 Sight</option><option value="shop" selected="">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel">✈ Travel</option><option value="market">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(11,3)">✕</button>
+          </div>
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="19:30" title="Time" onchange="syncAct(11,4,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Dinner" placeholder="Place / Activity" oninput="syncAct(11,4,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Ananya&#39;s choice of restaurant" placeholder="Notes (optional)" oninput="syncAct(11,4,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(11,4,&#39;type&#39;,this.value)">
+              <option value="food" selected="">🍜 Food</option><option value="sight">🏛 Sight</option><option value="shop">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel">✈ Travel</option><option value="market">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(11,4)">✕</button>
+          </div>
+        
+        <button class="add-act-btn" onclick="addActivity(11)">＋ Add Activity / Stop</button>
+      </div>
+    </div>
+  
+    <div class="day-card" id="dc-12">
+      <div class="day-header">
+        <div class="day-num-badge">12</div>
+        <div class="day-fields">
+          <input class="df df-date" type="date" value="2026-06-01" title="Date" onchange="sync(12,&#39;date&#39;,this.value)">
+          <input class="df df-city" type="text" value="Guangzhou" placeholder="City / Location" oninput="sync(12,&#39;city&#39;,this.value)">
+          <input class="df df-title" type="text" value="Guangzhou Shopping – Day 2" placeholder="Day Title" oninput="sync(12,&#39;title&#39;,this.value)">
+        </div>
+        <button class="btn btn-ghost" onclick="removeDay(12)">✕</button>
+      </div>
+      <div class="day-body">
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="10:00" title="Time" onchange="syncAct(12,0,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="TEMall / Grandview Mall" placeholder="Place / Activity" oninput="syncAct(12,0,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Premium shopping for remaining finds" placeholder="Notes (optional)" oninput="syncAct(12,0,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(12,0,&#39;type&#39;,this.value)">
+              <option value="food">🍜 Food</option><option value="sight">🏛 Sight</option><option value="shop" selected="">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel">✈ Travel</option><option value="market">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(12,0)">✕</button>
+          </div>
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="13:30" title="Time" onchange="syncAct(12,1,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Lunch Break" placeholder="Place / Activity" oninput="syncAct(12,1,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Mall food court or nearby restaurant" placeholder="Notes (optional)" oninput="syncAct(12,1,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(12,1,&#39;type&#39;,this.value)">
+              <option value="food" selected="">🍜 Food</option><option value="sight">🏛 Sight</option><option value="shop">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel">✈ Travel</option><option value="market">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(12,1)">✕</button>
+          </div>
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="15:00" title="Time" onchange="syncAct(12,2,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Consolidate Purchases" placeholder="Place / Activity" oninput="syncAct(12,2,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Photograph all items, check receipts" placeholder="Notes (optional)" oninput="syncAct(12,2,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(12,2,&#39;type&#39;,this.value)">
+              <option value="food">🍜 Food</option><option value="sight">🏛 Sight</option><option value="shop">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel">✈ Travel</option><option value="market">🏪 Market</option><option value="default" selected="">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(12,2)">✕</button>
+          </div>
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="17:00" title="Time" onchange="syncAct(12,3,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Budget Review" placeholder="Place / Activity" oninput="syncAct(12,3,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Nithya &amp; Abhi — total spend summary" placeholder="Notes (optional)" oninput="syncAct(12,3,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(12,3,&#39;type&#39;,this.value)">
+              <option value="food">🍜 Food</option><option value="sight">🏛 Sight</option><option value="shop">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel">✈ Travel</option><option value="market">🏪 Market</option><option value="default" selected="">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(12,3)">✕</button>
+          </div>
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="19:00" title="Time" onchange="syncAct(12,4,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Pearl River Promenade" placeholder="Place / Activity" oninput="syncAct(12,4,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Group photo walk — memories! 📸" placeholder="Notes (optional)" oninput="syncAct(12,4,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(12,4,&#39;type&#39;,this.value)">
+              <option value="food">🍜 Food</option><option value="sight" selected="">🏛 Sight</option><option value="shop">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel">✈ Travel</option><option value="market">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(12,4)">✕</button>
+          </div>
+        
+        <button class="add-act-btn" onclick="addActivity(12)">＋ Add Activity / Stop</button>
+      </div>
+    </div>
+  
+    <div class="day-card" id="dc-13">
+      <div class="day-header">
+        <div class="day-num-badge">13</div>
+        <div class="day-fields">
+          <input class="df df-date" type="date" value="2026-06-02" title="Date" onchange="sync(13,&#39;date&#39;,this.value)">
+          <input class="df df-city" type="text" value="Guangzhou → Home" placeholder="City / Location" oninput="sync(13,&#39;city&#39;,this.value)">
+          <input class="df df-title" type="text" value="Final Shopping &amp; Departure" placeholder="Day Title" oninput="sync(13,&#39;title&#39;,this.value)">
+        </div>
+        <button class="btn btn-ghost" onclick="removeDay(13)">✕</button>
+      </div>
+      <div class="day-body">
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="09:00" title="Time" onchange="syncAct(13,0,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Last Minute Market Stops" placeholder="Place / Activity" oninput="syncAct(13,0,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Any final supplier follow-ups" placeholder="Notes (optional)" oninput="syncAct(13,0,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(13,0,&#39;type&#39;,this.value)">
+              <option value="food">🍜 Food</option><option value="sight">🏛 Sight</option><option value="shop" selected="">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel">✈ Travel</option><option value="market">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(13,0)">✕</button>
+          </div>
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="12:00" title="Time" onchange="syncAct(13,1,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Pack &amp; Weigh Luggage" placeholder="Place / Activity" oninput="syncAct(13,1,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Organise receipts &amp; travel documents" placeholder="Notes (optional)" oninput="syncAct(13,1,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(13,1,&#39;type&#39;,this.value)">
+              <option value="food">🍜 Food</option><option value="sight">🏛 Sight</option><option value="shop">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel">✈ Travel</option><option value="market">🏪 Market</option><option value="default" selected="">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(13,1)">✕</button>
+          </div>
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="15:00" title="Time" onchange="syncAct(13,2,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Farewell Hot Pot Dinner" placeholder="Place / Activity" oninput="syncAct(13,2,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Group celebration meal together 🍲" placeholder="Notes (optional)" oninput="syncAct(13,2,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(13,2,&#39;type&#39;,this.value)">
+              <option value="food" selected="">🍜 Food</option><option value="sight">🏛 Sight</option><option value="shop">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel">✈ Travel</option><option value="market">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(13,2)">✕</button>
+          </div>
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="18:00" title="Time" onchange="syncAct(13,3,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Head to Airport / Station" placeholder="Place / Activity" oninput="syncAct(13,3,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Allow extra time for traffic" placeholder="Notes (optional)" oninput="syncAct(13,3,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(13,3,&#39;type&#39;,this.value)">
+              <option value="food">🍜 Food</option><option value="sight">🏛 Sight</option><option value="shop">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel" selected="">✈ Travel</option><option value="market">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(13,3)">✕</button>
+          </div>
+        
+          <div class="act-row">
+            <input class="af af-time" type="time" value="21:00" title="Time" onchange="syncAct(13,4,&#39;time&#39;,this.value)">
+            <input class="af af-place" type="text" value="Duty Free Shopping" placeholder="Place / Activity" oninput="syncAct(13,4,&#39;place&#39;,this.value)">
+            <input class="af af-note" type="text" value="Last treats before boarding ✈" placeholder="Notes (optional)" oninput="syncAct(13,4,&#39;note&#39;,this.value)">
+            <select class="af af-type" onchange="syncAct(13,4,&#39;type&#39;,this.value)">
+              <option value="food">🍜 Food</option><option value="sight">🏛 Sight</option><option value="shop" selected="">🛍 Shop</option><option value="hotel">🏨 Stay</option><option value="travel">✈ Travel</option><option value="market">🏪 Market</option><option value="default">📍 Activity</option>
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(13,4)">✕</button>
+          </div>
+        
+        <button class="add-act-btn" onclick="addActivity(13)">＋ Add Activity / Stop</button>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <!-- LEFT: CITY INFO (hidden initially) -->
+  <div id="pInfo" class="info-panel" style="display:none">
+    <div class="sec-label">Cities on This Trip</div>
+
+    <div class="city-card">
+      <div class="city-name"><span class="city-emoji">🏙</span> Guangzhou (广州)</div>
+      <div class="city-desc">Capital of Guangdong province &amp; one of China's largest trading hubs. Known as the "City of Flowers." Home to the famous Canton Fair — the largest trade fair in the world.</div>
+      <div class="info-grid">
+        <div class="info-item"><div class="info-item-label">Currency</div><div class="info-item-val">Chinese Yuan (CNY ¥)<br>~11.5 INR per ¥1</div></div>
+        <div class="info-item"><div class="info-item-label">Language</div><div class="info-item-val">Mandarin (official)<br>Cantonese (local)</div></div>
+        <div class="info-item"><div class="info-item-label">Time Zone</div><div class="info-item-val">CST (UTC+8)<br>+2:30 from IST</div></div>
+        <div class="info-item"><div class="info-item-label">Weather (May–Jun)</div><div class="info-item-val">28–34°C, Humid<br>Carry umbrella ☂</div></div>
+        <div class="info-item"><div class="info-item-label">Must Try Food</div><div class="info-item-val">Dim Sum, Wonton noodles, White Cut Chicken</div></div>
+        <div class="info-item"><div class="info-item-label">Key Markets</div><div class="info-item-val">Helong, Beijing Rd, Shangxiajiu, Zhanxi Rd</div></div>
+      </div>
+      <ul class="tips-list">
+        <li><span class="tip-highlight">WeChat Pay / Alipay</span> — essential for payments. Set up before you go.</li>
+        <li>Metro is cheap &amp; fast — grab a <span class="tip-highlight">Yangcheng Tong card</span> (transit card).</li>
+        <li>VPN needed for Google, WhatsApp, Instagram. Install <span class="tip-highlight">before arriving</span>.</li>
+        <li>Most market vendors speak basic English; use Google Translate for negotiating.</li>
+        <li>Bargain hard — first price is always 3–5x the final price.</li>
+      </ul>
+    </div>
+
+    <div class="city-card">
+      <div class="city-name"><span class="city-emoji">🏭</span> Lecong (乐从)</div>
+      <div class="city-desc">A town in Shunde District, Foshan — the furniture wholesale capital of the world. Lecong and nearby Longjiang host the largest concentration of furniture markets on Earth. Your main base.</div>
+      <div class="info-grid">
+        <div class="info-item"><div class="info-item-label">Distance from GZ</div><div class="info-item-val">~35 km southwest<br>~45 min by car</div></div>
+        <div class="info-item"><div class="info-item-label">Key Market</div><div class="info-item-val">Lecong Furniture City<br>Longjiang Market</div></div>
+        <div class="info-item"><div class="info-item-label">Kungfu Market</div><div class="info-item-val">Mixed wholesale goods<br>Open daily 8am–6pm</div></div>
+        <div class="info-item"><div class="info-item-label">Nearby</div><div class="info-item-val">Shunde — famous for food<br>Foshan city centre</div></div>
+      </div>
+      <ul class="tips-list">
+        <li>Furniture markets are spread over <span class="tip-highlight">several km</span> — wear comfortable shoes.</li>
+        <li>Hire a <span class="tip-highlight">local sourcing agent</span> if buying large quantities — saves time &amp; money.</li>
+        <li>Shunde cuisine is considered the best Cantonese food in the region — try it!</li>
+        <li>Take photos &amp; note down supplier booth numbers for follow-up.</li>
+      </ul>
+    </div>
+
+    <div class="city-card">
+      <div class="city-name"><span class="city-emoji">🤖</span> Shenzhen (深圳)</div>
+      <div class="city-desc">China's tech &amp; innovation hub, bordering Hong Kong. World-famous for Huaqiang Bei — the largest electronics market on Earth. Also great for fashion at Dongmen. Modern, fast-paced city.</div>
+      <div class="info-grid">
+        <div class="info-item"><div class="info-item-label">Distance from GZ</div><div class="info-item-val">~140 km southeast<br>~1.5 hr by train/car</div></div>
+        <div class="info-item"><div class="info-item-label">Huaqiang Bei</div><div class="info-item-val">Electronics wholesale<br>Open 9am–6pm</div></div>
+        <div class="info-item"><div class="info-item-label">Dongmen Market</div><div class="info-item-val">Fashion &amp; clothing<br>Open 10am–10pm</div></div>
+        <div class="info-item"><div class="info-item-label">Window of World</div><div class="info-item-val">Theme park / landmark<br>Open 10am–10pm</div></div>
+        <div class="info-item"><div class="info-item-label">Weather</div><div class="info-item-val">Similar to GZ<br>28–33°C, humid</div></div>
+        <div class="info-item"><div class="info-item-label">Best for</div><div class="info-item-val">Electronics, gadgets, fashion, accessories</div></div>
+      </div>
+      <ul class="tips-list">
+        <li>Huaqiang Bei has <span class="tip-highlight">multiple floors per building</span> and dozens of buildings — allow full day.</li>
+        <li>Dongmen is best in the <span class="tip-highlight">evening</span> — more stalls open, lively atmosphere.</li>
+        <li>Dafen Oil Painting Village — great for unique affordable wall art to bring back home.</li>
+        <li>Shenzhen metro is world-class — very easy to navigate with Google Maps.</li>
+      </ul>
+    </div>
+
+    <div class="city-card" style="border-left-color:#c0392b">
+      <div class="city-name"><span class="city-emoji">📦</span> General Travel Tips</div>
+      <div class="info-grid">
+        <div class="info-item"><div class="info-item-label">SIM Card</div><div class="info-item-val">Buy at airport — China Unicom recommended for foreigners</div></div>
+        <div class="info-item"><div class="info-item-label">Transport</div><div class="info-item-val">DiDi app (like Uber) for taxis. Metro in cities.</div></div>
+        <div class="info-item"><div class="info-item-label">Shipping Goods</div><div class="info-item-val">Use local freight agent in Lecong/GZ for bulk cargo home</div></div>
+        <div class="info-item"><div class="info-item-label">Emergency</div><div class="info-item-val">Police: 110 | Ambulance: 120 | Indian Embassy: +86-10-65321908</div></div>
+        <div class="info-item"><div class="info-item-label">Must-Have Apps</div><div class="info-item-val">WeChat, DiDi, Alipay, VPN, Google Translate (offline)</div></div>
+        <div class="info-item"><div class="info-item-label">Carry Always</div><div class="info-item-val">Passport, small cash ¥, power bank, umbrella</div></div>
+      </div>
+      <ul class="tips-list">
+        <li>Download <span class="tip-highlight">offline Google Maps</span> for GZ, Shenzhen, Lecong before arriving.</li>
+        <li>Carry business cards — suppliers expect them and it makes follow-up easier.</li>
+        <li>Most restaurants have <span class="tip-highlight">picture menus</span> — easy to order without language.</li>
+        <li>Tap water is <span class="tip-highlight">not safe to drink</span> — buy bottled water.</li>
+        <li>Indian food available in Guangzhou's Xiaobei area if homesick!</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- RIGHT: PREVIEW -->
+  <div class="preview-panel" id="preview">
+    <div class="prev-header">
+      <div class="prev-tag">Travel Itinerary</div>
+      <div class="prev-title" id="pvTitle">China Sourcing Trip 2026</div>
+      <div class="prev-names" id="pvNames"><span>Nithya · Abhi · Ananya</span></div>
+      <div class="prev-dates" id="pvDates">21 May 2026 – 2 Jun 2026</div>
+    </div>
+    <div class="prev-body" id="pvBody"><div class="prev-week">Week 1</div>
+      <div class="prev-day">
+        <div class="prev-date"><div class="pnum">21</div><div class="pdow">Thu · May</div></div>
+        <div class="prev-card">
+          <div class="prev-card-city">📍 Guangzhou → Lecong</div>
+          <div class="prev-card-title">Arrival &amp; Kungfu Market</div>
+          <ul class="prev-acts">
+          <li>
+            <span class="time-b">3:00 PM</span>
+            <strong>Guangzhou Airport</strong>
+             <span style="color:#7a6a55;font-weight:300">— Land, collect baggage, clear customs</span>
+            <span class="type-b t-travel">✈ Travel</span>
+          </li>
+          <li>
+            <span class="time-b">4:30 PM</span>
+            <strong>Transfer to Lecong</strong>
+             <span style="color:#7a6a55;font-weight:300">— ~45 min drive from GZ airport</span>
+            <span class="type-b t-travel">✈ Travel</span>
+          </li>
+          <li>
+            <span class="time-b">5:30 PM</span>
+            <strong>Home / Accommodation</strong>
+             <span style="color:#7a6a55;font-weight:300">— Check in, freshen up</span>
+            <span class="type-b t-hotel">🏨 Stay</span>
+          </li>
+          <li>
+            <span class="time-b">6:30 PM</span>
+            <strong>Kungfu Market</strong>
+             <span style="color:#7a6a55;font-weight:300">— Evening browse &amp; first purchases</span>
+            <span class="type-b t-market">🏪 Market</span>
+          </li>
+          <li>
+            <span class="time-b">8:30 PM</span>
+            <strong>Dinner at Home</strong>
+             <span style="color:#7a6a55;font-weight:300">— Home-cooked meal, rest &amp; plan Day 2</span>
+            <span class="type-b t-food">🍜 Food</span>
+          </li></ul>
+        </div>
+      </div>
+      <div class="prev-day">
+        <div class="prev-date"><div class="pnum">22</div><div class="pdow">Fri · May</div></div>
+        <div class="prev-card">
+          <div class="prev-card-city">📍 Lecong → Shenzhen</div>
+          <div class="prev-card-title">Huaqiang Bei &amp; Dongmen Markets</div>
+          <ul class="prev-acts">
+          <li>
+            <span class="time-b">8:00 AM</span>
+            <strong>Depart Lecong</strong>
+             <span style="color:#7a6a55;font-weight:300">— Early start, ~1.5 hr to Shenzhen</span>
+            <span class="type-b t-travel">✈ Travel</span>
+          </li>
+          <li>
+            <span class="time-b">10:00 AM</span>
+            <strong>Huaqiang Bei</strong>
+             <span style="color:#7a6a55;font-weight:300">— Electronics &amp; gadgets wholesale market</span>
+            <span class="type-b t-market">🏪 Market</span>
+          </li>
+          <li>
+            <span class="time-b">1:00 PM</span>
+            <strong>Lunch – Cantonese Resto</strong>
+             <span style="color:#7a6a55;font-weight:300">— Dongmen area, try local dishes</span>
+            <span class="type-b t-food">🍜 Food</span>
+          </li>
+          <li>
+            <span class="time-b">2:30 PM</span>
+            <strong>Dongmen Market</strong>
+             <span style="color:#7a6a55;font-weight:300">— Fashion, clothing &amp; accessories</span>
+            <span class="type-b t-market">🏪 Market</span>
+          </li>
+          <li>
+            <span class="time-b">6:00 PM</span>
+            <strong>Coco Park Mall</strong>
+             <span style="color:#7a6a55;font-weight:300">— Coffee, rest, small break</span>
+            <span class="type-b t-sight">🏛 Sight</span>
+          </li>
+          <li>
+            <span class="time-b">8:00 PM</span>
+            <strong>Return to Lecong</strong>
+             <span style="color:#7a6a55;font-weight:300">— Night drive back, ~1.5 hr</span>
+            <span class="type-b t-travel">✈ Travel</span>
+          </li></ul>
+        </div>
+      </div>
+      <div class="prev-day">
+        <div class="prev-date"><div class="pnum">23</div><div class="pdow">Sat · May</div></div>
+        <div class="prev-card">
+          <div class="prev-card-city">📍 Shenzhen → Lecong</div>
+          <div class="prev-card-title">Window of the World &amp; Artifacts</div>
+          <ul class="prev-acts">
+          <li>
+            <span class="time-b">9:00 AM</span>
+            <strong>Dim Sum Brunch</strong>
+             <span style="color:#7a6a55;font-weight:300">— Local restaurant before heading out</span>
+            <span class="type-b t-food">🍜 Food</span>
+          </li>
+          <li>
+            <span class="time-b">10:30 AM</span>
+            <strong>Window of the World</strong>
+             <span style="color:#7a6a55;font-weight:300">— Iconic landmark, sightseeing &amp; photos</span>
+            <span class="type-b t-sight">🏛 Sight</span>
+          </li>
+          <li>
+            <span class="time-b">1:30 PM</span>
+            <strong>Dafen Oil Painting Village</strong>
+             <span style="color:#7a6a55;font-weight:300">— Unique art &amp; affordable souvenirs</span>
+            <span class="type-b t-sight">🏛 Sight</span>
+          </li>
+          <li>
+            <span class="time-b">3:30 PM</span>
+            <strong>Artifacts &amp; Antiques Market</strong>
+             <span style="color:#7a6a55;font-weight:300">— Browse &amp; purchase unique pieces</span>
+            <span class="type-b t-market">🏪 Market</span>
+          </li>
+          <li>
+            <span class="time-b">7:30 PM</span>
+            <strong>Night Train / Car to Lecong</strong>
+             <span style="color:#7a6a55;font-weight:300">— Return to base for the night</span>
+            <span class="type-b t-travel">✈ Travel</span>
+          </li></ul>
+        </div>
+      </div>
+      <div class="prev-day">
+        <div class="prev-date"><div class="pnum">24</div><div class="pdow">Sun · May</div></div>
+        <div class="prev-card">
+          <div class="prev-card-city">📍 Lecong / Guangzhou</div>
+          <div class="prev-card-title">Market Research – Day 1</div>
+          <ul class="prev-acts">
+          <li>
+            <span class="time-b">9:00 AM</span>
+            <strong>Lecong Furniture City</strong>
+             <span style="color:#7a6a55;font-weight:300">— Catalogue items, photograph &amp; note prices</span>
+            <span class="type-b t-market">🏪 Market</span>
+          </li>
+          <li>
+            <span class="time-b">12:30 PM</span>
+            <strong>Lunch – Shunde Cuisine</strong>
+             <span style="color:#7a6a55;font-weight:300">— Try local Shunde fish dishes</span>
+            <span class="type-b t-food">🍜 Food</span>
+          </li>
+          <li>
+            <span class="time-b">2:00 PM</span>
+            <strong>Helong Clothing Market</strong>
+             <span style="color:#7a6a55;font-weight:300">— Fabric &amp; clothing wholesale section</span>
+            <span class="type-b t-market">🏪 Market</span>
+          </li>
+          <li>
+            <span class="time-b">5:30 PM</span>
+            <strong>Team Review Session</strong>
+             <span style="color:#7a6a55;font-weight:300">— Shortlist items, compare notes, plan orders</span>
+            
+          </li></ul>
+        </div>
+      </div>
+      <div class="prev-day">
+        <div class="prev-date"><div class="pnum">25</div><div class="pdow">Mon · May</div></div>
+        <div class="prev-card">
+          <div class="prev-card-city">📍 Lecong / Foshan</div>
+          <div class="prev-card-title">Market Research – Day 2</div>
+          <ul class="prev-acts">
+          <li>
+            <span class="time-b">9:00 AM</span>
+            <strong>Longjiang Furniture Market</strong>
+             <span style="color:#7a6a55;font-weight:300">— Largest furniture cluster in China</span>
+            <span class="type-b t-market">🏪 Market</span>
+          </li>
+          <li>
+            <span class="time-b">12:00 PM</span>
+            <strong>Lunch Break</strong>
+             <span style="color:#7a6a55;font-weight:300">— Local eatery near markets</span>
+            <span class="type-b t-food">🍜 Food</span>
+          </li>
+          <li>
+            <span class="time-b">1:30 PM</span>
+            <strong>Supplier Negotiations</strong>
+             <span style="color:#7a6a55;font-weight:300">— Get quotes, collect samples &amp; MOQs</span>
+            <span class="type-b t-market">🏪 Market</span>
+          </li>
+          <li>
+            <span class="time-b">5:00 PM</span>
+            <strong>Organise Supplier Contacts</strong>
+             <span style="color:#7a6a55;font-weight:300">— Sort photos, contacts &amp; pricing notes</span>
+            
+          </li></ul>
+        </div>
+      </div>
+      <div class="prev-day">
+        <div class="prev-date"><div class="pnum">26</div><div class="pdow">Tue · May</div></div>
+        <div class="prev-card">
+          <div class="prev-card-city">📍 Guangzhou</div>
+          <div class="prev-card-title">Market Research – Day 3</div>
+          <ul class="prev-acts">
+          <li>
+            <span class="time-b">9:30 AM</span>
+            <strong>Zhanxi Road Clothing Market</strong>
+             <span style="color:#7a6a55;font-weight:300">— Wholesale fashion sourcing</span>
+            <span class="type-b t-market">🏪 Market</span>
+          </li>
+          <li>
+            <span class="time-b">12:30 PM</span>
+            <strong>Canton Tower Lunch</strong>
+             <span style="color:#7a6a55;font-weight:300">— Lunch with a view of the city</span>
+            <span class="type-b t-food">🍜 Food</span>
+          </li>
+          <li>
+            <span class="time-b">2:30 PM</span>
+            <strong>Sample Collection</strong>
+             <span style="color:#7a6a55;font-weight:300">— Sizing checks &amp; final price negotiations</span>
+            <span class="type-b t-shop">🛍 Shop</span>
+          </li>
+          <li>
+            <span class="time-b">7:00 PM</span>
+            <strong>Pearl River Night Cruise</strong>
+             <span style="color:#7a6a55;font-weight:300">— Ananya's pick — scenic &amp; relaxing</span>
+            <span class="type-b t-sight">🏛 Sight</span>
+          </li></ul>
+        </div>
+      </div>
+      <div class="prev-day">
+        <div class="prev-date"><div class="pnum">27</div><div class="pdow">Wed · May</div></div>
+        <div class="prev-card">
+          <div class="prev-card-city">📍 Guangzhou / Lecong</div>
+          <div class="prev-card-title">Market Research – Day 4 &amp; Orders</div>
+          <ul class="prev-acts">
+          <li>
+            <span class="time-b">9:00 AM</span>
+            <strong>Final Market Rounds</strong>
+             <span style="color:#7a6a55;font-weight:300">— Last look at shortlisted items</span>
+            <span class="type-b t-market">🏪 Market</span>
+          </li>
+          <li>
+            <span class="time-b">11:00 AM</span>
+            <strong>Place Confirmed Orders</strong>
+             <span style="color:#7a6a55;font-weight:300">— Lock in suppliers, get receipts &amp; timelines</span>
+            <span class="type-b t-shop">🛍 Shop</span>
+          </li>
+          <li>
+            <span class="time-b">3:00 PM</span>
+            <strong>Shamian Island</strong>
+             <span style="color:#7a6a55;font-weight:300">— Colonial architecture, peaceful afternoon walk</span>
+            <span class="type-b t-sight">🏛 Sight</span>
+          </li>
+          <li>
+            <span class="time-b">7:30 PM</span>
+            <strong>Group Celebration Dinner</strong>
+             <span style="color:#7a6a55;font-weight:300">— End of market research week! 🥂</span>
+            <span class="type-b t-food">🍜 Food</span>
+          </li></ul>
+        </div>
+      </div><div class="prev-week">Week 2</div>
+      <div class="prev-day">
+        <div class="prev-date"><div class="pnum">28</div><div class="pdow">Thu · May</div></div>
+        <div class="prev-card">
+          <div class="prev-card-city">📍 Day Trip</div>
+          <div class="prev-card-title">Excursion – Day 1</div>
+          <ul class="prev-acts">
+          <li>
+            <span class="time-b">7:30 AM</span>
+            <strong>Depart early</strong>
+             <span style="color:#7a6a55;font-weight:300">— Pack snacks for the road</span>
+            <span class="type-b t-travel">✈ Travel</span>
+          </li>
+          <li>
+            <span class="time-b">10:00 AM</span>
+            <strong>Kaiping Diaolou Towers</strong>
+             <span style="color:#7a6a55;font-weight:300">— UNESCO heritage watchtowers (~2.5 hr drive)</span>
+            <span class="type-b t-sight">🏛 Sight</span>
+          </li>
+          <li>
+            <span class="time-b">1:00 PM</span>
+            <strong>Lunch at Local Restaurant</strong>
+             <span style="color:#7a6a55;font-weight:300">— Try countryside Cantonese food</span>
+            <span class="type-b t-food">🍜 Food</span>
+          </li>
+          <li>
+            <span class="time-b">3:00 PM</span>
+            <strong>Explore Kaiping Old Town</strong>
+             <span style="color:#7a6a55;font-weight:300">— Streets, markets &amp; local culture</span>
+            <span class="type-b t-sight">🏛 Sight</span>
+          </li></ul>
+        </div>
+      </div>
+      <div class="prev-day">
+        <div class="prev-date"><div class="pnum">29</div><div class="pdow">Fri · May</div></div>
+        <div class="prev-card">
+          <div class="prev-card-city">📍 Day Trip</div>
+          <div class="prev-card-title">Excursion – Day 2</div>
+          <ul class="prev-acts">
+          <li>
+            <span class="time-b">9:00 AM</span>
+            <strong>Zhongshan City</strong>
+             <span style="color:#7a6a55;font-weight:300">— Sun Yat-sen birthplace &amp; antique street</span>
+            <span class="type-b t-sight">🏛 Sight</span>
+          </li>
+          <li>
+            <span class="time-b">1:00 PM</span>
+            <strong>Lunch</strong>
+             <span style="color:#7a6a55;font-weight:300">— Local Zhongshan cuisine</span>
+            <span class="type-b t-food">🍜 Food</span>
+          </li>
+          <li>
+            <span class="time-b">3:30 PM</span>
+            <strong>Spa &amp; Massage</strong>
+             <span style="color:#7a6a55;font-weight:300">— Inexpensive &amp; excellent in this region</span>
+            
+          </li>
+          <li>
+            <span class="time-b">7:00 PM</span>
+            <strong>Night Market</strong>
+             <span style="color:#7a6a55;font-weight:300">— Street food &amp; souvenir shopping</span>
+            <span class="type-b t-shop">🛍 Shop</span>
+          </li></ul>
+        </div>
+      </div>
+      <div class="prev-day">
+        <div class="prev-date"><div class="pnum">30</div><div class="pdow">Sat · May</div></div>
+        <div class="prev-card">
+          <div class="prev-card-city">📍 Return to Guangzhou</div>
+          <div class="prev-card-title">Excursion – Day 3 / Return</div>
+          <ul class="prev-acts">
+          <li>
+            <span class="time-b">9:00 AM</span>
+            <strong>Wrap Up Trip</strong>
+             <span style="color:#7a6a55;font-weight:300">— Check out &amp; head back to Guangzhou</span>
+            <span class="type-b t-travel">✈ Travel</span>
+          </li>
+          <li>
+            <span class="time-b">12:00 PM</span>
+            <strong>Lunch en Route</strong>
+             <span style="color:#7a6a55;font-weight:300">— Stop at local eatery</span>
+            <span class="type-b t-food">🍜 Food</span>
+          </li>
+          <li>
+            <span class="time-b">2:30 PM</span>
+            <strong>Freight &amp; Shipping Agents</strong>
+             <span style="color:#7a6a55;font-weight:300">— Confirm bulk shipping quotes &amp; timelines</span>
+            
+          </li>
+          <li>
+            <span class="time-b">7:00 PM</span>
+            <strong>Early Dinner &amp; Rest</strong>
+             <span style="color:#7a6a55;font-weight:300">— Big shopping days ahead — rest up!</span>
+            <span class="type-b t-food">🍜 Food</span>
+          </li></ul>
+        </div>
+      </div>
+      <div class="prev-day">
+        <div class="prev-date"><div class="pnum">31</div><div class="pdow">Sun · May</div></div>
+        <div class="prev-card">
+          <div class="prev-card-city">📍 Guangzhou</div>
+          <div class="prev-card-title">Guangzhou Shopping – Day 1</div>
+          <ul class="prev-acts">
+          <li>
+            <span class="time-b">10:00 AM</span>
+            <strong>Beijing Road Pedestrian Street</strong>
+             <span style="color:#7a6a55;font-weight:300">— Fashion, accessories, cosmetics</span>
+            <span class="type-b t-shop">🛍 Shop</span>
+          </li>
+          <li>
+            <span class="time-b">1:00 PM</span>
+            <strong>Lunch – Local Cantonese</strong>
+             <span style="color:#7a6a55;font-weight:300">— Try Guangzhou Restaurant (century old)</span>
+            <span class="type-b t-food">🍜 Food</span>
+          </li>
+          <li>
+            <span class="time-b">2:30 PM</span>
+            <strong>Shangxiajiu Commercial Street</strong>
+             <span style="color:#7a6a55;font-weight:300">— Local brands &amp; traditional snacks</span>
+            <span class="type-b t-shop">🛍 Shop</span>
+          </li>
+          <li>
+            <span class="time-b">5:00 PM</span>
+            <strong>Gift Shopping</strong>
+             <span style="color:#7a6a55;font-weight:300">— Tea, ceramics, dried goods for family home</span>
+            <span class="type-b t-shop">🛍 Shop</span>
+          </li>
+          <li>
+            <span class="time-b">7:30 PM</span>
+            <strong>Dinner</strong>
+             <span style="color:#7a6a55;font-weight:300">— Ananya's choice of restaurant</span>
+            <span class="type-b t-food">🍜 Food</span>
+          </li></ul>
+        </div>
+      </div>
+      <div class="prev-day">
+        <div class="prev-date"><div class="pnum">1</div><div class="pdow">Mon · Jun</div></div>
+        <div class="prev-card">
+          <div class="prev-card-city">📍 Guangzhou</div>
+          <div class="prev-card-title">Guangzhou Shopping – Day 2</div>
+          <ul class="prev-acts">
+          <li>
+            <span class="time-b">10:00 AM</span>
+            <strong>TEMall / Grandview Mall</strong>
+             <span style="color:#7a6a55;font-weight:300">— Premium shopping for remaining finds</span>
+            <span class="type-b t-shop">🛍 Shop</span>
+          </li>
+          <li>
+            <span class="time-b">1:30 PM</span>
+            <strong>Lunch Break</strong>
+             <span style="color:#7a6a55;font-weight:300">— Mall food court or nearby restaurant</span>
+            <span class="type-b t-food">🍜 Food</span>
+          </li>
+          <li>
+            <span class="time-b">3:00 PM</span>
+            <strong>Consolidate Purchases</strong>
+             <span style="color:#7a6a55;font-weight:300">— Photograph all items, check receipts</span>
+            
+          </li>
+          <li>
+            <span class="time-b">5:00 PM</span>
+            <strong>Budget Review</strong>
+             <span style="color:#7a6a55;font-weight:300">— Nithya &amp; Abhi — total spend summary</span>
+            
+          </li>
+          <li>
+            <span class="time-b">7:00 PM</span>
+            <strong>Pearl River Promenade</strong>
+             <span style="color:#7a6a55;font-weight:300">— Group photo walk — memories! 📸</span>
+            <span class="type-b t-sight">🏛 Sight</span>
+          </li></ul>
+        </div>
+      </div>
+      <div class="prev-day">
+        <div class="prev-date"><div class="pnum">2</div><div class="pdow">Tue · Jun</div></div>
+        <div class="prev-card">
+          <div class="prev-card-city">📍 Guangzhou → Home</div>
+          <div class="prev-card-title">Final Shopping &amp; Departure</div>
+          <ul class="prev-acts">
+          <li>
+            <span class="time-b">9:00 AM</span>
+            <strong>Last Minute Market Stops</strong>
+             <span style="color:#7a6a55;font-weight:300">— Any final supplier follow-ups</span>
+            <span class="type-b t-shop">🛍 Shop</span>
+          </li>
+          <li>
+            <span class="time-b">12:00 PM</span>
+            <strong>Pack &amp; Weigh Luggage</strong>
+             <span style="color:#7a6a55;font-weight:300">— Organise receipts &amp; travel documents</span>
+            
+          </li>
+          <li>
+            <span class="time-b">3:00 PM</span>
+            <strong>Farewell Hot Pot Dinner</strong>
+             <span style="color:#7a6a55;font-weight:300">— Group celebration meal together 🍲</span>
+            <span class="type-b t-food">🍜 Food</span>
+          </li>
+          <li>
+            <span class="time-b">6:00 PM</span>
+            <strong>Head to Airport / Station</strong>
+             <span style="color:#7a6a55;font-weight:300">— Allow extra time for traffic</span>
+            <span class="type-b t-travel">✈ Travel</span>
+          </li>
+          <li>
+            <span class="time-b">9:00 PM</span>
+            <strong>Duty Free Shopping</strong>
+             <span style="color:#7a6a55;font-weight:300">— Last treats before boarding ✈</span>
+            <span class="type-b t-shop">🛍 Shop</span>
+          </li></ul>
+        </div>
+      </div></div>
+    <div class="prev-footer" id="pvFoot">Nithya · Abhi · Ananya · 21 May 2026 – 2 Jun 2026</div>
+  </div>
+
+</div>
+
+<script>
+/* ══════════════════════════════════════
+   DATA & STATE
+══════════════════════════════════════ */
+let days = [];
+let counter = 0;
+
+const DOW   = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+const TYPE_LABELS = {
+  food:'🍜 Food', sight:'🏛 Sight', shop:'🛍 Shop',
+  hotel:'🏨 Stay', travel:'✈ Travel', market:'🏪 Market', default:'📍 Activity'
+};
+const TYPE_CSS = {
+  food:'t-food', sight:'t-sight', shop:'t-shop',
+  hotel:'t-hotel', travel:'t-travel', market:'t-market', default:'t-default'
+};
+
+/* ══════════════════════════════════════
+   CHINA TRIP DATA
+══════════════════════════════════════ */
+const CHINA_DATA = [
+  { date:'2026-05-21', city:'Guangzhou → Lecong', title:'Arrival & Kungfu Market', activities:[
+    { time:'15:00', place:'Guangzhou Airport',     note:'Land, collect baggage, clear customs', type:'travel' },
+    { time:'16:30', place:'Transfer to Lecong',    note:'~45 min drive from GZ airport',        type:'travel' },
+    { time:'17:30', place:'Home / Accommodation',  note:'Check in, freshen up',                  type:'hotel'  },
+    { time:'18:30', place:'Kungfu Market',          note:'Evening browse & first purchases',      type:'market' },
+    { time:'20:30', place:'Dinner at Home',         note:'Home-cooked meal, rest & plan Day 2',   type:'food'   },
+  ]},
+  { date:'2026-05-22', city:'Lecong → Shenzhen', title:'Huaqiang Bei & Dongmen Markets', activities:[
+    { time:'08:00', place:'Depart Lecong',          note:'Early start, ~1.5 hr to Shenzhen',      type:'travel' },
+    { time:'10:00', place:'Huaqiang Bei',            note:'Electronics & gadgets wholesale market',type:'market' },
+    { time:'13:00', place:'Lunch – Cantonese Resto', note:'Dongmen area, try local dishes',        type:'food'   },
+    { time:'14:30', place:'Dongmen Market',          note:'Fashion, clothing & accessories',       type:'market' },
+    { time:'18:00', place:'Coco Park Mall',          note:'Coffee, rest, small break',             type:'sight'  },
+    { time:'20:00', place:'Return to Lecong',        note:'Night drive back, ~1.5 hr',             type:'travel' },
+  ]},
+  { date:'2026-05-23', city:'Shenzhen → Lecong', title:'Window of the World & Artifacts', activities:[
+    { time:'09:00', place:'Dim Sum Brunch',          note:'Local restaurant before heading out',   type:'food'   },
+    { time:'10:30', place:'Window of the World',     note:'Iconic landmark, sightseeing & photos', type:'sight'  },
+    { time:'13:30', place:'Dafen Oil Painting Village',note:'Unique art & affordable souvenirs',   type:'sight'  },
+    { time:'15:30', place:'Artifacts & Antiques Market',note:'Browse & purchase unique pieces',    type:'market' },
+    { time:'19:30', place:'Night Train / Car to Lecong',note:'Return to base for the night',       type:'travel' },
+  ]},
+  { date:'2026-05-24', city:'Lecong / Guangzhou', title:'Market Research – Day 1', activities:[
+    { time:'09:00', place:'Lecong Furniture City',   note:'Catalogue items, photograph & note prices', type:'market'},
+    { time:'12:30', place:'Lunch – Shunde Cuisine',  note:'Try local Shunde fish dishes',           type:'food'   },
+    { time:'14:00', place:'Helong Clothing Market',  note:'Fabric & clothing wholesale section',    type:'market' },
+    { time:'17:30', place:'Team Review Session',     note:'Shortlist items, compare notes, plan orders',type:'default'},
+  ]},
+  { date:'2026-05-25', city:'Lecong / Foshan', title:'Market Research – Day 2', activities:[
+    { time:'09:00', place:'Longjiang Furniture Market',note:'Largest furniture cluster in China',  type:'market' },
+    { time:'12:00', place:'Lunch Break',              note:'Local eatery near markets',             type:'food'   },
+    { time:'13:30', place:'Supplier Negotiations',    note:'Get quotes, collect samples & MOQs',   type:'market' },
+    { time:'17:00', place:'Organise Supplier Contacts',note:'Sort photos, contacts & pricing notes',type:'default'},
+  ]},
+  { date:'2026-05-26', city:'Guangzhou', title:'Market Research – Day 3', activities:[
+    { time:'09:30', place:'Zhanxi Road Clothing Market',note:'Wholesale fashion sourcing',         type:'market' },
+    { time:'12:30', place:'Canton Tower Lunch',       note:'Lunch with a view of the city',        type:'food'   },
+    { time:'14:30', place:'Sample Collection',         note:'Sizing checks & final price negotiations',type:'shop'},
+    { time:'19:00', place:'Pearl River Night Cruise',  note:'Ananya\'s pick — scenic & relaxing',  type:'sight'  },
+  ]},
+  { date:'2026-05-27', city:'Guangzhou / Lecong', title:'Market Research – Day 4 & Orders', activities:[
+    { time:'09:00', place:'Final Market Rounds',       note:'Last look at shortlisted items',       type:'market' },
+    { time:'11:00', place:'Place Confirmed Orders',    note:'Lock in suppliers, get receipts & timelines',type:'shop'},
+    { time:'15:00', place:'Shamian Island',            note:'Colonial architecture, peaceful afternoon walk',type:'sight'},
+    { time:'19:30', place:'Group Celebration Dinner',  note:'End of market research week! 🥂',      type:'food'   },
+  ]},
+  { date:'2026-05-28', city:'Day Trip', title:'Excursion – Day 1', activities:[
+    { time:'07:30', place:'Depart early',              note:'Pack snacks for the road',             type:'travel' },
+    { time:'10:00', place:'Kaiping Diaolou Towers',   note:'UNESCO heritage watchtowers (~2.5 hr drive)',type:'sight'},
+    { time:'13:00', place:'Lunch at Local Restaurant', note:'Try countryside Cantonese food',        type:'food'   },
+    { time:'15:00', place:'Explore Kaiping Old Town',  note:'Streets, markets & local culture',     type:'sight'  },
+  ]},
+  { date:'2026-05-29', city:'Day Trip', title:'Excursion – Day 2', activities:[
+    { time:'09:00', place:'Zhongshan City',            note:'Sun Yat-sen birthplace & antique street',type:'sight'},
+    { time:'13:00', place:'Lunch',                     note:'Local Zhongshan cuisine',               type:'food'   },
+    { time:'15:30', place:'Spa & Massage',             note:'Inexpensive & excellent in this region', type:'default'},
+    { time:'19:00', place:'Night Market',              note:'Street food & souvenir shopping',        type:'shop'   },
+  ]},
+  { date:'2026-05-30', city:'Return to Guangzhou', title:'Excursion – Day 3 / Return', activities:[
+    { time:'09:00', place:'Wrap Up Trip',              note:'Check out & head back to Guangzhou',    type:'travel' },
+    { time:'12:00', place:'Lunch en Route',            note:'Stop at local eatery',                  type:'food'   },
+    { time:'14:30', place:'Freight & Shipping Agents', note:'Confirm bulk shipping quotes & timelines',type:'default'},
+    { time:'19:00', place:'Early Dinner & Rest',       note:'Big shopping days ahead — rest up!',    type:'food'   },
+  ]},
+  { date:'2026-05-31', city:'Guangzhou', title:'Guangzhou Shopping – Day 1', activities:[
+    { time:'10:00', place:'Beijing Road Pedestrian Street',note:'Fashion, accessories, cosmetics',  type:'shop'   },
+    { time:'13:00', place:'Lunch – Local Cantonese',   note:'Try Guangzhou Restaurant (century old)',type:'food'   },
+    { time:'14:30', place:'Shangxiajiu Commercial Street',note:'Local brands & traditional snacks', type:'shop'   },
+    { time:'17:00', place:'Gift Shopping',             note:'Tea, ceramics, dried goods for family home',type:'shop'},
+    { time:'19:30', place:'Dinner',                    note:'Ananya\'s choice of restaurant',        type:'food'   },
+  ]},
+  { date:'2026-06-01', city:'Guangzhou', title:'Guangzhou Shopping – Day 2', activities:[
+    { time:'10:00', place:'TEMall / Grandview Mall',   note:'Premium shopping for remaining finds',  type:'shop'   },
+    { time:'13:30', place:'Lunch Break',               note:'Mall food court or nearby restaurant',  type:'food'   },
+    { time:'15:00', place:'Consolidate Purchases',     note:'Photograph all items, check receipts',  type:'default'},
+    { time:'17:00', place:'Budget Review',             note:'Nithya & Abhi — total spend summary',   type:'default'},
+    { time:'19:00', place:'Pearl River Promenade',     note:'Group photo walk — memories! 📸',        type:'sight'  },
+  ]},
+  { date:'2026-06-02', city:'Guangzhou → Home', title:'Final Shopping & Departure', activities:[
+    { time:'09:00', place:'Last Minute Market Stops',  note:'Any final supplier follow-ups',         type:'shop'   },
+    { time:'12:00', place:'Pack & Weigh Luggage',      note:'Organise receipts & travel documents',  type:'default'},
+    { time:'15:00', place:'Farewell Hot Pot Dinner',   note:'Group celebration meal together 🍲',     type:'food'   },
+    { time:'18:00', place:'Head to Airport / Station', note:'Allow extra time for traffic',           type:'travel' },
+    { time:'21:00', place:'Duty Free Shopping',        note:'Last treats before boarding ✈',          type:'shop'   },
+  ]},
+];
+
+/* ══════════════════════════════════════
+   CORE FUNCTIONS
+══════════════════════════════════════ */
+function addDay(data) {
+  counter++;
+  days.push({
+    id: counter,
+    date:  data?.date  || '',
+    city:  data?.city  || '',
+    title: data?.title || '',
+    activities: (data?.activities || []).map(a => ({...a}))
+  });
+  render();
+}
+
+function removeDay(id) {
+  days = days.filter(d => d.id !== id);
+  render();
+}
+
+function addActivity(dayId, data) {
+  const d = days.find(x => x.id === dayId);
+  if (!d) return;
+  d.activities.push({ time: data?.time||'', place: data?.place||'', note: data?.note||'', type: data?.type||'default' });
+  render();
+}
+
+function removeActivity(dayId, idx) {
+  const d = days.find(x => x.id === dayId);
+  if (d) { d.activities.splice(idx, 1); render(); }
+}
+
+function sync(id, field, val) {
+  const d = days.find(x => x.id === id);
+  if (d) { d[field] = val; updatePreview(); }
+}
+
+function syncAct(dayId, idx, field, val) {
+  const d = days.find(x => x.id === dayId);
+  if (d && d.activities[idx]) { d.activities[idx][field] = val; updatePreview(); }
+}
+
+function loadChina() {
+  if (days.length > 0 && !confirm('Reset to the China trip plan?')) return;
+  days = []; counter = 0;
+  CHINA_DATA.forEach(d => addDay(d));
+}
+
+function clearAll() {
+  if (!confirm('Clear everything?')) return;
+  days = []; counter = 0;
+  ['hTrip','hNames','hFrom','hTo'].forEach(id => document.getElementById(id).value = '');
+  render();
+}
+
+/* ══════════════════════════════════════
+   RENDER EDITOR
+══════════════════════════════════════ */
+function render() {
+  renderEditor();
+  updatePreview();
+}
+
+function renderEditor() {
+  const list = document.getElementById('dayList');
+  if (days.length === 0) {
+    list.innerHTML = `<div class="empty-state">Click <strong>＋ Add Day</strong> to start<br>or <strong>↺ Reset China Trip</strong> to load the full plan</div>`;
+    return;
+  }
+  list.innerHTML = days.map((day, di) => `
+    <div class="day-card" id="dc-${day.id}">
+      <div class="day-header">
+        <div class="day-num-badge">${di+1}</div>
+        <div class="day-fields">
+          <input class="df df-date"  type="date" value="${day.date}"  title="Date"     onchange="sync(${day.id},'date',this.value)">
+          <input class="df df-city"  type="text" value="${esc(day.city)}"  placeholder="City / Location" oninput="sync(${day.id},'city',this.value)">
+          <input class="df df-title" type="text" value="${esc(day.title)}" placeholder="Day Title"       oninput="sync(${day.id},'title',this.value)">
+        </div>
+        <button class="btn btn-ghost" onclick="removeDay(${day.id})">✕</button>
+      </div>
+      <div class="day-body">
+        ${day.activities.map((a, ai) => `
+          <div class="act-row">
+            <input class="af af-time"  type="time" value="${a.time}" title="Time"  onchange="syncAct(${day.id},${ai},'time',this.value)">
+            <input class="af af-place" type="text" value="${esc(a.place)}" placeholder="Place / Activity" oninput="syncAct(${day.id},${ai},'place',this.value)">
+            <input class="af af-note"  type="text" value="${esc(a.note)}"  placeholder="Notes (optional)" oninput="syncAct(${day.id},${ai},'note',this.value)">
+            <select class="af af-type" onchange="syncAct(${day.id},${ai},'type',this.value)">
+              ${Object.keys(TYPE_LABELS).map(t => `<option value="${t}" ${a.type===t?'selected':''}>${TYPE_LABELS[t]}</option>`).join('')}
+            </select>
+            <button class="btn btn-red" onclick="removeActivity(${day.id},${ai})">✕</button>
+          </div>
+        `).join('')}
+        <button class="add-act-btn" onclick="addActivity(${day.id})">＋ Add Activity / Stop</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ══════════════════════════════════════
+   PREVIEW
+══════════════════════════════════════ */
+function fmt12(t) {
+  if (!t) return '';
+  const [h,m] = t.split(':').map(Number);
+  return `${h%12||12}:${String(m).padStart(2,'0')} ${h>=12?'PM':'AM'}`;
+}
+
+function fmtDate(s) {
+  if (!s) return null;
+  const d = new Date(s + 'T00:00:00');
+  return { day: d.getDate(), dow: DOW[d.getDay()], mon: MONTHS[d.getMonth()], yr: d.getFullYear() };
+}
+
+function esc(s) {
+  return (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function updatePreview() {
+  const trip  = document.getElementById('hTrip').value  || 'Your Trip';
+  const names = document.getElementById('hNames').value || '';
+  const df    = document.getElementById('hFrom').value;
+  const dt    = document.getElementById('hTo').value;
+
+  document.getElementById('pvTitle').textContent = trip;
+  document.getElementById('pvNames').innerHTML   = names ? `<span>${names}</span>` : '';
+
+  let dStr = '';
+  if (df && dt) {
+    const f = fmtDate(df), t = fmtDate(dt);
+    dStr = `${f.day} ${f.mon} ${f.yr} – ${t.day} ${t.mon} ${t.yr}`;
+  } else if (df) {
+    const f = fmtDate(df);
+    dStr = `From ${f.day} ${f.mon} ${f.yr}`;
+  }
+  document.getElementById('pvDates').textContent = dStr || 'Set travel dates above';
+  document.getElementById('pvFoot').textContent  = [names, dStr].filter(Boolean).join(' · ');
+
+  const body = document.getElementById('pvBody');
+  if (days.length === 0) {
+    body.innerHTML = `<div class="prev-empty">✦ Add days on the left to build your itinerary</div>`;
+    return;
+  }
+
+  // Group into weeks of 7
+  let html = '';
+  days.forEach((day, di) => {
+    if (di % 7 === 0) {
+      const wn = Math.floor(di/7) + 1;
+      html += `<div class="prev-week">Week ${wn}</div>`;
+    }
+    const fd = day.date ? fmtDate(day.date) : null;
+    const dateBlock = fd
+      ? `<div class="pnum">${fd.day}</div><div class="pdow">${fd.dow} · ${fd.mon}</div>`
+      : `<div class="pnum" style="font-size:16px;padding-top:4px;color:#9a8a75">${di+1}</div><div class="pdow">Day</div>`;
+
+    const acts = day.activities.length > 0
+      ? day.activities.map(a => `
+          <li>
+            ${a.time ? `<span class="time-b">${fmt12(a.time)}</span>` : ''}
+            ${a.place ? `<strong>${a.place}</strong>` : '<em style="color:#9a8a75">Unnamed</em>'}
+            ${a.note  ? ` <span style="color:#7a6a55;font-weight:300">— ${a.note}</span>` : ''}
+            ${a.type && a.type!=='default' ? `<span class="type-b ${TYPE_CSS[a.type]||'t-default'}">${TYPE_LABELS[a.type]||''}</span>` : ''}
+          </li>`).join('')
+      : `<li style="color:#9a8a75;font-style:italic">No activities added</li>`;
+
+    html += `
+      <div class="prev-day">
+        <div class="prev-date">${dateBlock}</div>
+        <div class="prev-card">
+          ${day.city  ? `<div class="prev-card-city">📍 ${day.city}</div>` : ''}
+          <div class="prev-card-title">${day.title || 'Day '+(di+1)}</div>
+          <ul class="prev-acts">${acts}</ul>
+        </div>
+      </div>`;
+  });
+
+  body.innerHTML = html;
+}
+
+/* ══════════════════════════════════════
+   EXPORT CLEAN HTML
+══════════════════════════════════════ */
+function exportClean() {
+  const trip  = document.getElementById('hTrip').value  || 'Trip Itinerary';
+  const names = document.getElementById('hNames').value || '';
+  const df    = document.getElementById('hFrom').value;
+  const dt    = document.getElementById('hTo').value;
+  let dStr = '';
+  if (df && dt) {
+    const f = fmtDate(df), t = fmtDate(dt);
+    dStr = `${f.day} ${f.mon} ${f.yr} – ${t.day} ${t.mon} ${t.yr}`;
+  }
+
+  const daysHTML = days.map((day, di) => {
+    const fd = day.date ? fmtDate(day.date) : null;
+    const dateBlock = fd
+      ? `<div class="pnum">${fd.day}</div><div class="pdow">${fd.dow} · ${fd.mon}</div>`
+      : `<div class="pnum">${di+1}</div><div class="pdow">Day</div>`;
+    const acts = day.activities.map(a =>
+      `<li>${a.time?`<span class="time-b">${fmt12(a.time)}</span>`:''}
+       ${a.place?`<strong>${a.place}</strong>`:''} ${a.note?`— ${a.note}`:''}</li>`
+    ).join('');
+    return `<div class="prev-day">
+      <div class="prev-date">${dateBlock}</div>
+      <div class="prev-card">
+        ${day.city  ? `<div class="prev-card-city">📍 ${day.city}</div>` : ''}
+        <div class="prev-card-title">${day.title||'Day '+(di+1)}</div>
+        <ul class="prev-acts">${acts}</ul>
+      </div></div>`;
+  }).join('');
+
+  const out = `<!DOCTYPE html><html><head><meta charset="UTF-8">
+<title>${trip}</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#fdf6ec;color:#1a1208;font-family:'Segoe UI',Arial,sans-serif;font-size:14px;}
+.header{background:#1a1208;color:#fdf6ec;padding:24px;text-align:center;}
+.tag{font-size:9px;letter-spacing:.4em;color:#c9a84c;text-transform:uppercase;margin-bottom:4px;}
+h1{font-size:24px;font-weight:700;margin-bottom:4px;}
+.names{font-size:12px;color:#a09080;letter-spacing:.1em;}
+.names span{color:#c9a84c;}
+.badge{display:inline-block;border:1px solid #c9a84c;color:#c9a84c;font-size:10px;letter-spacing:.2em;padding:3px 14px;margin-top:8px;text-transform:uppercase;}
+.body{max-width:700px;margin:0 auto;padding:20px 16px 40px;}
+.prev-day{display:flex;gap:12px;margin-bottom:12px;}
+.prev-date{flex:0 0 46px;text-align:center;}
+.pnum{font-size:24px;font-weight:700;color:#c0392b;line-height:1;}
+.pdow{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:#9a8a75;}
+.prev-card{flex:1;background:#fff9f0;border:1px solid #e8d9c0;border-left:3px solid #c0392b;border-radius:4px;padding:8px 12px;}
+.prev-card-city{font-size:9px;text-transform:uppercase;letter-spacing:.2em;color:#c9a84c;font-weight:600;margin-bottom:2px;}
+.prev-card-title{font-size:13px;font-weight:700;color:#1a1208;margin-bottom:5px;}
+.prev-acts{list-style:none;}
+.prev-acts li{font-size:11px;color:#4a3c28;padding:2px 0;display:flex;gap:5px;align-items:flex-start;line-height:1.4;}
+.prev-acts li::before{content:'›';color:#c0392b;font-weight:700;flex-shrink:0;}
+.time-b{background:#f5e8d0;color:#8a6a20;font-size:9px;padding:1px 5px;border-radius:2px;flex-shrink:0;font-weight:600;}
+.footer{text-align:center;padding:14px;font-size:10px;color:#a09080;border-top:1px solid #e8d9c0;letter-spacing:.1em;}
+@media print{body{background:#fff;}}
+</style></head><body>
+<div class="header">
+  <div class="tag">Travel Itinerary</div>
+  <h1>${trip}</h1>
+  <div class="names">${names?`<span>${names}</span>`:''}</div>
+  <div class="badge">${dStr}</div>
+</div>
+<div class="body">${daysHTML}</div>
+<div class="footer">${[names,dStr].filter(Boolean).join(' · ')}</div>
+</body></html>`;
+
+  const blob = new Blob([out], {type:'text/html'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = trip.replace(/\s+/g,'-').toLowerCase() + '.html';
+  a.click();
+}
+
+/* ══════════════════════════════════════
+   PRINT
+══════════════════════════════════════ */
+function printPrev() {
+  const html = document.getElementById('preview').innerHTML;
+  const w = window.open('','_blank');
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8">
+  <title>Print Itinerary</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'Segoe UI',Arial,sans-serif;background:#fdf6ec;color:#1a1208;}
+    .prev-header{background:#1a1208;color:#fdf6ec;padding:20px;text-align:center;}
+    .prev-tag{font-size:9px;letter-spacing:.4em;color:#c9a84c;text-transform:uppercase;}
+    .prev-title{font-size:22px;font-weight:700;}
+    .prev-names span{color:#c9a84c;}
+    .prev-names{font-size:12px;color:#a09080;letter-spacing:.1em;}
+    .prev-dates{display:inline-block;border:1px solid #c9a84c;color:#c9a84c;font-size:10px;letter-spacing:.2em;padding:3px 12px;margin-top:8px;text-transform:uppercase;}
+    .prev-body{max-width:700px;margin:0 auto;padding:16px;}
+    .prev-week{font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:#c9a84c;margin:16px 0 8px 58px;border-bottom:1px solid #e8d9c0;padding-bottom:4px;}
+    .prev-day{display:flex;gap:12px;margin-bottom:10px;}
+    .prev-date{flex:0 0 46px;text-align:center;}
+    .pnum{font-size:22px;font-weight:700;color:#c0392b;line-height:1;}
+    .pdow{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:#9a8a75;}
+    .prev-card{flex:1;background:#fff9f0;border:1px solid #e8d9c0;border-left:3px solid #c0392b;border-radius:4px;padding:7px 11px;}
+    .prev-card-city{font-size:9px;text-transform:uppercase;letter-spacing:.2em;color:#c9a84c;font-weight:600;margin-bottom:2px;}
+    .prev-card-title{font-size:13px;font-weight:700;margin-bottom:4px;}
+    .prev-acts{list-style:none;}
+    .prev-acts li{font-size:11px;color:#4a3c28;padding:2px 0;display:flex;gap:5px;align-items:flex-start;line-height:1.4;}
+    .prev-acts li::before{content:'›';color:#c0392b;font-weight:700;flex-shrink:0;}
+    .time-b{background:#f5e8d0;color:#8a6a20;font-size:9px;padding:1px 5px;border-radius:2px;flex-shrink:0;font-weight:600;}
+    .type-b{font-size:9px;padding:1px 5px;border-radius:2px;flex-shrink:0;font-weight:600;}
+    .t-food{background:#fff0d0;color:#8a5000;} .t-sight{background:#d0f0e8;color:#006040;}
+    .t-shop{background:#f0d0f0;color:#600060;} .t-hotel{background:#d0e8f0;color:#003060;}
+    .t-travel{background:#e8e8e8;color:#404040;} .t-market{background:#ffe8d0;color:#804000;}
+    .prev-footer{text-align:center;padding:12px;font-size:10px;color:#a09080;border-top:1px solid #e8d9c0;letter-spacing:.1em;}
+    .prev-header::before{display:none;}
+  </style></head><body>${html}</body></html>`);
+  w.document.close();
+  setTimeout(() => w.print(), 500);
+}
+
+/* ══════════════════════════════════════
+   TABS
+══════════════════════════════════════ */
+function switchTab(tab, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('pEditor').style.display = tab === 'editor' ? '' : 'none';
+  document.getElementById('pInfo').style.display   = tab === 'info'   ? '' : 'none';
+}
+
+/* ══════════════════════════════════════
+   HEADER LIVE SYNC
+══════════════════════════════════════ */
+['hTrip','hNames','hFrom','hTo'].forEach(id =>
+  document.getElementById(id).addEventListener('input', updatePreview)
+);
+
+/* ══════════════════════════════════════
+   EXPORT AS IMAGE
+══════════════════════════════════════ */
+function exportImage() {
+  const trip = document.getElementById('hTrip').value || 'itinerary';
+  const panel = document.getElementById('preview');
+
+  // Temporarily expand preview panel to full scroll height for full capture
+  const origHeight  = panel.style.height;
+  const origOverflow = panel.style.overflow;
+  panel.style.height   = panel.scrollHeight + 'px';
+  panel.style.overflow = 'visible';
+
+  const btn = event.target;
+  btn.textContent = '⏳ Generating…';
+  btn.disabled = true;
+
+  html2canvas(panel, {
+    scale: 2,
+    useCORS: true,
+    backgroundColor: '#fdf6ec',
+    scrollY: 0,
+    windowWidth: panel.scrollWidth,
+    windowHeight: panel.scrollHeight,
+    height: panel.scrollHeight,
+    width: panel.scrollWidth,
+  }).then(canvas => {
+    // Restore
+    panel.style.height   = origHeight;
+    panel.style.overflow = origOverflow;
+    btn.textContent = '🖼 Save as Image';
+    btn.disabled = false;
+
+    const a = document.createElement('a');
+    a.href = canvas.toDataURL('image/png');
+    a.download = trip.replace(/\s+/g,'-').toLowerCase() + '-itinerary.png';
+    a.click();
+  }).catch(err => {
+    panel.style.height   = origHeight;
+    panel.style.overflow = origOverflow;
+    btn.textContent = '🖼 Save as Image';
+    btn.disabled = false;
+    alert('Image export failed: ' + err.message);
+  });
+}
+
+/* ══════════════════════════════════════
+   INIT — load China trip on open
+══════════════════════════════════════ */
+window.onload = function() {
+  CHINA_DATA.forEach(d => addDay(d));
+};
+</script>
+
+
+</body></html>
